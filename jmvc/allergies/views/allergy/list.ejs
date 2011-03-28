@@ -1,0 +1,30 @@
+<%
+  var reports_sorted = _(reports).sortBy(function(r){
+    if (typeof(r.item.dateDiagnosed) != 'undefined') return r.item.dateDiagnosed
+    else return '-99999'
+  });
+
+  _(reports_sorted.reverse()).each(function(report) {
+    var date = report.item.dateDiagnosed;
+    var name = report.item.name;
+    var reaction = report.item.reaction;
+    var specifics = report.item.specifics;
+%>
+  <tr>
+    <% if (date) { %>
+      <td><%= date %></td>
+    <% } else { %>
+      <td>Undated</td>
+    <% } %>
+
+    <td><%= name %></td>
+
+  </tr>
+  <% if(reaction) { %>
+    <tr>
+      <td colspan="2" class="details" style="padding-left: 2em; font-size: 1.1em; background-color: #fff; color: #464337">
+        Reaction: <%= reaction %><br><%= specifics %>
+      </td>
+    <tr>
+  <% } %>
+<% }) %>

@@ -1,0 +1,93 @@
+
+
+
+<% 
+  // we just care about latest reports here
+
+//  _(latest_reports).each(function(r){
+//    console.log(r);
+//    if (typeof(r.item) === 'undefined') { console.log('undefined item!', r); }
+//  })
+//
+//  reports = _.sortBy(latest_reports, function(r){ return r.item.type; })
+  
+//   for (var f = 0; f < reports.length; f++) {
+//     if (f == reports.length - 1) { break; }
+//     var first = reports[f];
+//     var second = reports[f+1];
+//     if (first.item.type !== second.item.type) { continue; }
+//     if (second.item.date_measured > first.item.date_measured) {
+//       var tmp = first;
+//       reports[f] = reports[f+1];
+//       reports[f+1] = tmp;
+//     }
+//   }
+// 
+%>
+
+<%
+  for(var i = 0; i < lab_types_categories_list.length ; i++) { 
+    var category = lab_types_categories_list[i]
+    var reports_in_cat = _(reports).select(function(report){ return report.item.category === category; });
+    var sorted = _(reports_in_cat).sortBy(function(r){ return r.item.order ? r.item.order : 1000 ; })
+    if (_(reports_in_cat).isEmpty()) { continue; }
+%>
+
+
+    <h3 style="margin: 0 0 0 0;"><%= category %> Latest
+      <span class="category_toggle small" style="font-weight: normal; font-size: x-small">
+        <a href="#<%= category %>">hide</a>
+      </span> 
+    </h3>
+
+    <div id="<%= category %>_div">
+
+      <% 
+        // select the reports in this category and iterate over them
+        // sort by the optional "order" parameter, lowest index first, nulls at end
+        var background_p = false;
+        var last_type = null;
+
+        // console.log(reports, latest_reports, lab_types_categories_list, lab_types_to_categories_map)
+
+        _(sorted).each(function(report){
+          var item = report.item;
+      %>
+        <!-- DRY with below -->
+        <div class="report" style="
+          <% 
+            if (last_type != item.type) { background_p = !background_p; }
+            else { 
+          %>
+              margin-top: -12px;
+          <%
+            } 
+            last_type = item.type;
+            if (background_p) { 
+          %>
+              background: #fff;
+          <%
+            } 
+          %>
+        ">
+          <div class="date_measured_by_type" style="color:#999; font-weight: bold; margin-bottom: -32px;">
+            <%= item.date_measured %>
+          </div>
+          <div class="report_inner" style="margin-left: 100px;">
+            <% for(var a = 0; a < item.panels.length ; a++) { %>
+              <%= view('./views/lab/panel', {'item': item, 'panel': item.panels[a], 'date_p': true}) %>
+            <% } %>
+
+            <% for(var b = 0; b < item.tests.length ; b++) { %>
+              <%= view('./views/lab/test', {'item': item, 'test': item.tests[b], 'show_lab_p': true, 'date_p': true}) %>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    
+      <br>
+      <br>
+    </div>
+<% } %>
+
+

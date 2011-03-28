@@ -1,0 +1,96 @@
+<% 
+  // NOTE: we dont deal with multiple results per test at this point. see views.py. and results is an object not a list
+  var results = test.results;
+  
+  // we randomly generate an id for each test to refer to its details div in the href
+  var id = Math.round(Math.random()*100000000)
+%>
+
+
+<% if (show_lab_p) { %>
+  <div class="test_with_labs" style="padding: 8px 0 8px 8px;">
+<% } else { %>
+ <div class="test">
+<% } %>
+  <div class="test_inner">
+    <a href="#<%= id %>" title="Click for test details">
+      <%= test.name_abbreviation %>:
+
+      <span class="results_value"
+        <% if (test.results.flag_value == 'C') { %>
+          style="color: red"
+        <% } %>
+        >
+          <%= results.value %>
+       </span><% if(results.value_unit == '%') { %>%<% } else { %>
+        <%= results.value_unit %>
+      <% } %>
+
+      <% if (results.value_unit != results.value_abbreviation) { %>
+        (<%= results.value_abbreviation %>)
+      <% } %>
+
+      <% if (test.final == 'false') { %>
+        <span class="results_preliminary">PRELIMINARY</span>
+      <% } %>
+
+      <% if (test.results.flag_value) { %>
+        <span class="flag_value" style="vertical-align: text-bottom"><strong>
+          <% if (test.results.flag_value == 'L') { %>&darr;
+          <% } else if (test.results.flag_value == 'H') { %>&uarr;
+          <% } else if (test.results.flag_value == 'C') { %>
+          <% } else { %><%= test.results.flag_value %><% } %>
+        </strong></span>
+      <% } %>
+    </a>
+  </div>
+  <div class="test_inner_details" id="details_<%= id %>" style="margin-left: 16px; display: none; font-size: small">
+    <% if (test.final) { %>
+      final: <%= test.final %>
+      <br>
+    <% } %>
+
+    <% if (results.flag_value) { %>
+      flag: <%= results.flag_value %>
+      <% if (results.flag_value != results.flag_abbreviation) { %>
+        (<%= results.flag_abbreviation %>)
+      <% } %>
+
+      <br>
+    <% } %>
+
+    <!-- DRY up!! -->
+
+    <% if (results.normal_range_maximum || results.normal_range_minimum) { %>
+      
+      
+      normal_range_maximum: <%= results.normal_range_maximum %><%= results.normal_range_unit %>
+
+      <% if (results.normal_range_unit != results.normal_range_unit_abbreviation) { %>
+        (<%= results.normal_range_unit_abbreviation %>)
+      <% } %>
+    
+      <br>
+
+      normal_range_minimum: <%= results.normal_range_minimum %><%= results.normal_range_unit %>
+
+      <% if (results.normal_range_unit != results.normal_range_unit_abbreviation) { %>
+        (<%= results.normal_range_unit_abbreviation %>)
+      <% } %>
+
+      <br>
+
+    <% } %>
+    
+    
+  </div>
+
+  <% if (show_lab_p) { %>
+    <%= view('./views/lab/laboratory', {'item': item}) %>
+  <% } %>
+
+</div>
+
+
+
+
