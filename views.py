@@ -113,7 +113,8 @@ def allergies(request):
         print 'FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...'
         return
         
-    reports_et_list = list(parse_xml(xml))
+    reports_et = parse_xml(xml)
+    reports_et_list = list(reports_et)
     reports = {
       'summary': {
         'total_document_count': reports_et_list[0].attrib['total_document_count'],
@@ -136,7 +137,7 @@ def allergies(request):
       # FIXME: get metadata
       
       return {
-        'meta':  meta.text.strip(),
+        'meta':  str(meta.text).strip(),
         'item': _parse_allergy(allergy)
       }
     
@@ -160,7 +161,7 @@ def allergies(request):
 
     # note: we depend on the reports being ordered by date_measured
     # it's ascending by default, hence the reverse()
-    reports_for_parsing = reports_et_list[1:]
+    reports_for_parsing = list(reports_et.findall('Report'))
     reports_for_parsing.reverse()
     
     for r in reports_for_parsing:
