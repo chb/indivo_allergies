@@ -121,10 +121,16 @@ def new_allergy(request):
     
     # add the allergy
     client = get_indivo_client(request)
-    res = client.post_document(record_id = request.session['record_id'], data=new_xml)
+    res = client.post_document(record_id = request.session['record_id'], data=new_xml, debug=True)
     
-    # TODO: This doesn't return the response from client.post_document() to the JMVC layer !?!
-    return HttpResponse(res.response, mimetype='text/plain')
+    # we always return a 200 HttpResponse, let's deal with errors in the controller
+    status = res.response['response_status']
+    if 200 == int(status):
+        status = 'success'
+    else:
+        status = res.response['response_data']
+    
+    return HttpResponse(status)
 
 def one_allergy(request):
     return

@@ -10,14 +10,20 @@
       
       #loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
       #loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
-      #allergy form { max-width: 600px; margin: 0 1em 1em; }
-      #allergy form textarea { padding: 2px; }
-      #allergy form .full { float: right; width: 75%; }
-      #allergy form .short { width: 30%; }
-      #allergy p { margin: 0; padding-top: 1em; clear: right; }
+      #allergy_form {
+        position: absolute; width: 480px; height: auto; top: -200px; right: 140px; padding: 20px; text-align: left;
+        border: 1px solid rgb(180,180,180); border-radius: 0.4em; background-color:rgb(245,245,245);
+        background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(252,252,252)), to(rgb(240,240,240)));
+	    background-image:-moz-linear-gradient(top, rgb(250,250,250), rgb(235,235,235));
+        -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      }
+      #allergy_form textarea { padding: 2px; }
+      #allergy_form .full { float: right; width: 75%; }
+      #allergy_form .short { width: 30%; }
+      #allergy_form p { margin: 0; padding-top: 1em; clear: right; }
       
       td.details { padding-left: 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
-      .bottom_buttons { padding-top: 2em; text-align: right; clear: right; }
+      .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
     </style>
   </head>
   <body>

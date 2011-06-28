@@ -43,25 +43,37 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	// Bind events
 	'#add_allergy click': function() {
-		$('#allergy').html(this.view('form'));
+	    var button = $('#add_allergy');
+	    
+	    // add form to view
+	    var form = $(this.view('form'));
+		button.attr('disabled', 'disabled').before(form);
+		
+		// get its height and position accordingly. No worries about width and x-position, should always fit on desktop browsers
+		var desired_offset = form.find('.bottom_buttons').position().top;
+		form.css('top', -1 * Math.round(Math.min(desired_offset, button.offset().top - 40)));
 	},
 	'form submit': function(form, event) {
-	    form.find('input[type="submit"]').attr('disabled', 'disabled');
-	    var id = form.find('input[name="id"]').val();
-	    var params = form.serializeArray();
-	    
-	    Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));       // "update" will call "create" if no id is given
+		form.find('input[type="submit"]').attr('disabled', 'disabled');
+		var id = form.find('input[name="id"]').val();
+		var params = form.serializeArray();
+		
+		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));		// "update" will call "create" if no id is given
 	},
 	'.cancel_editing click': function() {
-		this.load();
+    	$('#add_allergy').removeAttr('disabled');
+		$('#allergy_form').detach();
 	},
 	
 	// Handle form returns
-	formReturn: function(ret, textStatus) {
-	    //alert(textStatus + "\n" + ret);
-	    if ('success' == textStatus) {
-	        this.load();
-	    }
-	    $('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
+	formReturn: function(data, status) {        // this is the success callback, 'status' will always be "success", look in 'data'
+		if ('success' == data) {
+			this.load();
+			return;
+		}
+		
+		alert(data);
+		
+		$('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
 	},
 });

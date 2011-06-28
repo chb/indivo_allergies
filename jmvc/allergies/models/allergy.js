@@ -39,11 +39,7 @@ $.Model.extend('Allergies.Models.Allergy',
                     success(data, textStatus);
                 }
             }),
-            error: this.callback(function(data, textStatus, xhr) {
-                if (error) {
-                    error(data, textStatus);
-                }
-            })
+            error: error
         }); 
     },
     
