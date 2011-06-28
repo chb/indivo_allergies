@@ -1,0 +1,23 @@
+
+<div style="width: 25%;">
+    <h2>Allergies</h2>
+</div>
+
+<form id="allergy_form" method="post" action="" onsubmit="return false">
+    <input type="hidden" name="id" value="" />
+    
+    <p>Type<input class="full" type="text" name="allergen_type" value="" /></p>
+    <p>Allergen<input class="full" type="text" name="allergen_name" value="" /></p>
+    
+    <p>Reaction<input class="full" type="text" name="reaction" value="" /></p>
+    <p>Description<textarea class="full" name="specifics"></textarea></p>
+    
+    <p style="float: right; width: 76%; text-align: right;">
+        Reported by <input class="short" type="text" name="diagnosed_by" value="" /> on <input class="short" type="text" name="date_diagnosed" value="" />
+    </p>
+    
+    <div class="bottom_buttons">
+        <input class="cancel_editing" type="reset" value="Cancel" />
+        <input type="submit" value="<% if (false) { %>Save<% } else { %>Report<% } %>" />
+    </div>
+</form>

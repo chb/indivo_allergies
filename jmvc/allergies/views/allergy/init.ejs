@@ -1,22 +1,29 @@
 
 <div style="width: 25%; margin-bottom: 0;">
-  <h2 style="margin-left: -4px;">Allergies</h2>
+    <h2>Allergies</h2>
 </div>
 
 
-<div id="loading" style='float: right; margin-top: -48px; width: 50%; text-align: center; display: block'>
-  <h3>Loading...</h3>
+<div id="loading" style="float: right; margin-top: -48px;">
+    <h3><img class="loader" src="./resources/ajax-loader.gif"/>Loading</h3>
 </div>
 
-<table class="light">
+<table id="allergy_list" class="light">
+    <colgroup>
+        <col width="200" />
+        <col />
+    </colgroup>
     <thead>
     <tr>
-      <th style="width: 200px">diagnosed</th>
-      <th>allergen</th>
+        <th>diagnosed</th>
+        <th>allergen</th>
     </tr>
     </thead>
     <tbody>
-        <%= view('./views/allergy/list',{'reports': reports})%>
+        <%= view('./views/allergy/list',{'reports': reports}) %>
     </tbody>
 </table>
+<div class="bottom_buttons">
+    <input id="add_allergy" type="button" value="Report an allergy" />
+</div>
 

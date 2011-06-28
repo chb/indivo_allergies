@@ -34,9 +34,9 @@ def start_auth(request):
     # prepare request token parameters
     params = {'oauth_callback':'oob'}
     if record_id:
-        params['indivo_record_id'] = record_id
+            params['indivo_record_id'] = record_id
     if carenet_id:
-        params['indivo_carenet_id'] = carenet_id
+            params['indivo_carenet_id'] = carenet_id
     
     params['offline'] = 1
     
@@ -61,7 +61,7 @@ def after_auth(request):
     
     # is this the right token?
     if token_in_session['oauth_token'] != oauth_token:
-        return HttpResponse("oh oh bad token")
+            return HttpResponse("oh oh bad token")
     
     # get the indivo client and use the request token as the token for the exchange
     client = get_indivo_client(request, with_session_token=False)
@@ -75,31 +75,60 @@ def after_auth(request):
     request.session['access_token'] = access_token
     
     if access_token.has_key('xoauth_indivo_record_id'):
-        request.session['record_id'] = access_token['xoauth_indivo_record_id']
+            request.session['record_id'] = access_token['xoauth_indivo_record_id']
     else:
-        if request.session.has_key('record_id'):
-            del request.session['record_id']
-        request.session['carenet_id'] = access_token['xoauth_indivo_carenet_id']
+            if request.session.has_key('record_id'):
+                    del request.session['record_id']
+            request.session['carenet_id'] = access_token['xoauth_indivo_carenet_id']
     
     # now get the long-lived token using this access token
     client= get_indivo_client(request)
     try:
-        long_lived_token = parse_token_from_response(client.get_long_lived_token())
-        
-        request.session['long_lived_token'] = long_lived_token
+            long_lived_token = parse_token_from_response(client.get_long_lived_token())
+            
+            request.session['long_lived_token'] = long_lived_token
     except:
-        pass
+            pass
     return index(request)
 
 def index(request):
     """pass the record_id to JMVC and use the JSON/REST api from there"""
 
     return render_to_response(
-        settings.JS_HOME+'/'+settings.SUBMODULE_NAME+'.html',
-        {'SUBMODULE_NAME': settings.SUBMODULE_NAME,
-         'INDIVO_UI_APP_CSS': settings.INDIVO_UI_SERVER_BASE+'/jmvc/ui/resources/css/ui.css'}
+            settings.JS_HOME+'/'+settings.SUBMODULE_NAME+'.html',
+            {'SUBMODULE_NAME': settings.SUBMODULE_NAME,
+             'INDIVO_UI_APP_CSS': settings.INDIVO_UI_SERVER_BASE+'/jmvc/ui/resources/css/ui.css'}
     )
 
+def new_allergy(request):
+    """
+    Creates an allergy XML from POSTed values
+    """
+    # parse the date (TODO: Really parse human input)
+    date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.datetime.now().strftime('%Y-%m-%d')
+    
+    # get the variables and create an XML
+    params = {  'code_abbrev':      '',
+                'coding_system':    'snomed',
+                'date_diagnosed':   date_diag,
+                'allergen_type':    request.POST.get('allergen_type', 'unknown'),
+                'allergen_name':    request.POST.get('allergen_name', 'unknown'),
+                'reaction':         request.POST.get('reaction', 'unknown'),
+                'specifics':        request.POST.get('specifics', ''),
+                'diagnosed_by' :    request.POST.get('diagnosed_by', '')
+            }
+    new_xml = render_raw('allergy', params, type='xml')
+    
+    # add the allergy
+    client = get_indivo_client(request)
+    res = client.post_document(record_id = request.session['record_id'], data=new_xml)
+    
+    # TODO: This doesn't return the response from client.post_document() to the JMVC layer !?!
+    return HttpResponse(res.response, mimetype='text/plain')
+
+def one_allergy(request):
+    return
+    
 def allergies(request):
     limit = int(request.GET.get('limit', 100)) # defaults
     offset = int(request.GET.get('offset', 0))
@@ -112,51 +141,51 @@ def allergies(request):
     else:
         print 'FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...'
         return
-        
+            
     reports_et = parse_xml(xml)
     reports_et_list = list(reports_et)
     reports = {
-      'summary': {
-        'total_document_count': reports_et_list[0].attrib['total_document_count'],
-        'limit':                reports_et_list[0].attrib['limit'],
-        'offset':               reports_et_list[0].attrib['offset'],
-        'order_by':             reports_et_list[0].attrib['order_by'],
-        'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
-        'current_page':         (offset / limit) + 1    # 1-index this
-      },
-      'reports': []
+        'summary': {
+            'total_document_count': reports_et_list[0].attrib['total_document_count'],
+            'limit':                                reports_et_list[0].attrib['limit'],
+            'offset':                               reports_et_list[0].attrib['offset'],
+            'order_by':                         reports_et_list[0].attrib['order_by'],
+            'total_pages_count':        int(reports_et_list[0].attrib['total_document_count']) / limit,
+            'current_page':                 (offset / limit) + 1        # 1-index this
+        },
+        'reports': []
     }
     
     def _parse_report(report):
-      meta = report.find('Meta')
-      item = report.find('Item')
-      allergy = item[0]
-      
-      # FIXME: get metadata
-      # FIXME: get metadata
-      # FIXME: get metadata
-      
-      return {
-        'meta':  str(meta.text).strip(),
-        'item': _parse_allergy(allergy)
-      }
+        meta = report.find('Meta')
+        item = report.find('Item')
+        allergy = item[0]
+        
+        # FIXME: get metadata
+        # FIXME: get metadata
+        # FIXME: get metadata
+        
+        return {
+            'meta':  str(meta.text).strip(),
+            'item': _parse_allergy(allergy)
+        }
     
     def _parse_allergy(i):
-      result = {}
-      for e in i:
-        if e.tag == NS+'dateDiagnosed':
-          result.update({'dateDiagnosed': e.text})
-        elif e.tag == NS+'allergen':
-          for e2 in e:
-            if e2.tag == NS+'type':
-              result.update({'type': e2.text.strip()})
-            elif e2.tag == NS+'name':
-              result.update({'name': e2.text.strip()})
-        elif e.tag == NS+'reaction':
-          result.update({'reaction': e.text.strip()})
-        elif e.tag == NS+'specifics':
-          result.update({'specifics': e.text.strip()})
-      return result
+        result = {}
+        for e in i:
+            if e.tag == NS+'dateDiagnosed':
+                result.update({'dateDiagnosed': e.text})
+            elif e.tag == NS+'allergen':
+                for e2 in e:
+                    if e2.tag == NS+'type':
+                        result.update({'type': e2.text.strip()})
+                    elif e2.tag == NS+'name':
+                        result.update({'name': e2.text.strip()})
+            elif e.tag == NS+'reaction':
+                result.update({'reaction': e.text.strip()})
+            elif e.tag == NS+'specifics':
+                result.update({'specifics': e.text.strip()})
+        return result
     
 
     # note: we depend on the reports being ordered by date_measured
@@ -165,13 +194,13 @@ def allergies(request):
     reports_for_parsing.reverse()
     
     for r in reports_for_parsing:
-      parsed_report = _parse_report(r)
+        parsed_report = _parse_report(r)
 
-      if parsed_report:
-        reports['reports'].append(parsed_report)
-      else:
-        continue
-        
+        if parsed_report:
+            reports['reports'].append(parsed_report)
+        else:
+            continue
+            
     # print simplejson.dumps(reports)
     
     return HttpResponse(simplejson.dumps(reports), mimetype='text/plain')

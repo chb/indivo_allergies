@@ -39,7 +39,7 @@ MIME_TYPES = {'html': 'text/html', 'xml': 'application/xml'}
 
 def render_raw(template_name, vars, type):
   """ rendering a template into a string """
-  t_obj = loader.get_template('%s.%s' % (template_name, type))
+  t_obj = loader.get_template('%s/%s.%s' % (settings.TEMPLATE_PREFIX, template_name, type))
   c_obj = Context(vars)
   return t_obj.render(c_obj)
 
