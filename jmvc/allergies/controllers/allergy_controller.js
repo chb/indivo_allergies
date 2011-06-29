@@ -42,16 +42,18 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	// Bind events
-	'#add_allergy click': function() {
-	    var button = $('#add_allergy');
+	'#add_allergy click': function(button) {
+	    if ($('#allergy_form').is('*')) {
+	        return;
+	    }
 	    
-	    // add form to view
+	    // adjust buttons
+	    $('#allergy_list').css('opacity', 0.5).find('.update_allergy').addClass('disabled');
+		button.attr('disabled', 'disabled');
+        
+	    // add the form to the view, get its height and position accordingly. No worries about width and x-position, should always fit on desktop browsers
 	    var form = $(this.view('form'));
-		button.attr('disabled', 'disabled').before(form);
-		
-		// get its height and position accordingly. No worries about width and x-position, should always fit on desktop browsers
-		var desired_offset = form.find('.bottom_buttons').position().top;
-		form.css('top', -1 * Math.round(Math.min(desired_offset, button.offset().top - 40)));
+		button.before(form);
 	},
 	'form submit': function(form, event) {
 		form.find('input[type="submit"]').attr('disabled', 'disabled');
@@ -60,12 +62,38 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		
 		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));		// "update" will call "create" if no id is given
 	},
-	'.cancel_editing click': function() {
+	'.cancel_editing click': function(button) {
+	    button.attr('disabled', 'disabled');
     	$('#add_allergy').removeAttr('disabled');
+    	$('#allergy_list').css('opacity', 1).find('.update_allergy').removeClass('disabled');
+    	$('.update_allergy').removeClass('active');
 		$('#allergy_form').detach();
 	},
-	'.update_allergy click': function() {
-	    alert("Nah, I don't work just yet");
+	'.update_allergy click': function(link) {
+	    if ($('#allergy_form').is('*')) {
+	        return;
+	    }
+	    
+	    // adjust buttons
+	    var allergy_table = $('#allergy_list');
+	    allergy_table.css('opacity', 0.5).css('opacity', 0.5).find('.update_allergy').addClass('disabled');
+		link.removeClass('disabled').addClass('active');
+		$('#add_allergy').attr('disabled', 'disabled');
+	    
+	    // add the form to the view, get its height and position accordingly. No worries about width and x-position, should always fit on desktop browsers
+	    var form = $(this.view('form'));
+	    var ref_elem = $('#add_allergy');
+		ref_elem.before(form);
+		
+		// try to align the midline of the link with the midlines of the form's cancel/submit buttons
+		var desired_offset = link.offset().top + (link.height() / 2) - ref_elem.offset().top;        // link's midline offset relative to ref_elem
+		var pos_buttons = form.find('.bottom_buttons');
+		var pos_button = pos_buttons.find('input').first();
+		var button_offset = pos_buttons.position().top + pos_button.position().top + (pos_button.height() / 1.5);
+		var min = 0;
+		var max = allergy_table.position().top + $('#allergy_list').outerHeight() - form.outerHeight() - min;
+		
+		form.css('right', 80).css('top', Math.round(Math.min(Math.max(desired_offset - button_offset, min), max)));
 	},
 	
 	// Handle form returns

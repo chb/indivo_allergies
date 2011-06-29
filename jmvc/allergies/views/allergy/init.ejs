@@ -1,11 +1,14 @@
 
-<div style="width: 25%;">
-    <h2>Allergies</h2>
+<div id="loading" class="floating">
+    <h3><img class="loader" src="./resources/ajax-loader.gif" />Loading</h3>
 </div>
 
+<div class="top_buttons">
+    <input id="add_allergy" type="button" value="Report an allergy" />
+</div>
 
-<div id="loading" style="float: right; margin-top: -48px;">
-    <h3><img class="loader" src="./resources/ajax-loader.gif" />Loading</h3>
+<div style="width: 25%;">
+    <h2>Allergies</h2>
 </div>
 
 <table id="allergy_list" class="light">
@@ -17,7 +20,3 @@
         <%= view('./views/allergy/list', { 'reports': reports }) %>
     </tbody>
 </table>
-<div class="bottom_buttons">
-    <input id="add_allergy" type="button" value="Report an allergy" />
-</div>
-
