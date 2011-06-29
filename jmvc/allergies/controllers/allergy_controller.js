@@ -64,6 +64,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
     	$('#add_allergy').removeAttr('disabled');
 		$('#allergy_form').detach();
 	},
+	'.update_allergy click': function() {
+	    alert("Nah, I don't work just yet");
+	},
 	
 	// Handle form returns
 	formReturn: function(data, status) {        // this is the success callback, 'status' will always be "success", look in 'data'

@@ -9,31 +9,34 @@ if (reports && reports.length > 0) {
 
     _(reports_sorted.reverse()).each(function(report) {
         var date = report.item.dateDiagnosed;
+        var doc = report.item.diagnosedBy;
         var name = report.item.name;
+        var type = report.item.type;
         var reaction = report.item.reaction;
         var specifics = report.item.specifics;
 %>
     <tr>
-        <% if (date) { %>
-            <td><%= date %></td>
-        <% } else { %>
-            <td>Undated</td>
+        <td><%= name %>
+        <% if (type) { %>
+            <div class="family"><%= type %></div>
         <% } %>
-
-        <td><%= name %></td>
-
+        </td>
+        <td class="details"><%= reaction %>
+        <% if (specifics) { %>
+            <div class="specifics"><%= specifics %></div>
+        <% } %>
+            <div class="meta">
+                <%= doc %>
+                <% if (date && doc) { %>, <% } %>
+                <%= date %>
+                <a class="update_allergy" href="javascript:void(0);">Update</a>
+            </div>
+        </td>
     </tr>
-    <% if (reaction) { %>
-        <tr>
-            <td colspan="2" class="details">
-                Reaction: <%= reaction %><br><%= specifics %>
-            </td>
-        <tr>
-    <% }
-    })
+<% })
 }
 else { %>
-    <tr><td colspan="2">
-        <h3>No reports</h3>
-    </td></tr>
+    <tr>
+        <td colspan="2"><h3>No reports</h3></td>
+    </tr>
 <% } %>

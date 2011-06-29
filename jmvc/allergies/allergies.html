@@ -1,15 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en" style="height: 100%">
   <head>
-    <title{{APP_NAME}}</title>
+    <title>{{APP_NAME}}</title>
     <link rel="stylesheet" href="{{INDIVO_UI_APP_CSS}}" type="text/css" media="screen">
     <style>
       /* If the app's styling is simple enough, just inline it here */
       body { background: #FAFAFA; } /* don't inherit background, so we don't color the inside with record colors */
+      h2 { margin-bottom: 1em; }
       td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
       
       #loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
       #loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
+      
+      #allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
+      
       #allergy_form {
         position: absolute; width: 480px; height: auto; top: -200px; right: 140px; padding: 20px; text-align: left;
         border: 1px solid rgb(180,180,180); border-radius: 0.4em; background-color:rgb(245,245,245);
@@ -22,7 +26,11 @@
       #allergy_form .short { width: 30%; }
       #allergy_form p { margin: 0; padding-top: 1em; clear: right; }
       
-      td.details { padding-left: 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
+      td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
+      .specifics { margin: 0.5em 0; padding: 0.5em 0; font-size: 0.9em; border-top: 1px dotted rgb(0,0,0); border-top-color: rgba(0,0,0,0.1); }
+      .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
+      .meta { font-size: 0.75em; text-align: right; color: rgba(70,67,55,0.6); }
+      .meta a { margin-left: 1.5em; }
       .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
     </style>
   </head>

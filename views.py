@@ -153,11 +153,11 @@ def allergies(request):
     reports = {
         'summary': {
             'total_document_count': reports_et_list[0].attrib['total_document_count'],
-            'limit':                                reports_et_list[0].attrib['limit'],
-            'offset':                               reports_et_list[0].attrib['offset'],
-            'order_by':                         reports_et_list[0].attrib['order_by'],
-            'total_pages_count':        int(reports_et_list[0].attrib['total_document_count']) / limit,
-            'current_page':                 (offset / limit) + 1        # 1-index this
+            'limit':                reports_et_list[0].attrib['limit'],
+            'offset':               reports_et_list[0].attrib['offset'],
+            'order_by':             reports_et_list[0].attrib['order_by'],
+            'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
+            'current_page':         (offset / limit) + 1        # 1-index this
         },
         'reports': []
     }
