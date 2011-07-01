@@ -26,7 +26,7 @@ $.Model.extend('Allergies.Models.Allergy',
     
     
     /**
-     * Create a new allergy
+     * Create or update an allergy
      */
     create: function(params, success, error) {
         $.ajax({
@@ -43,10 +43,6 @@ $.Model.extend('Allergies.Models.Allergy',
         }); 
     },
     
-    
-    /**
-     * Update an allergy
-     */
     update: function(id, params, success, error) {
         if (!id) {
             return this.create(params, success, error);

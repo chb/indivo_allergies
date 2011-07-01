@@ -60,7 +60,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		var id = form.find('input[name="id"]').val();
 		var params = form.serializeArray();
 		
-		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));		// "update" will call "create" if no id is given
+		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));	// "update" will call "create" if no id is given
 	},
 	'.cancel_editing click': function(button) {
 	    button.attr('disabled', 'disabled');
@@ -96,15 +96,29 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		form.css('right', 80).css('top', Math.round(Math.min(Math.max(desired_offset - button_offset, min), max)));
 	},
 	
-	// Handle form returns
+	// handle form returns
 	formReturn: function(data, status) {        // this is the success callback, 'status' will always be "success", look in 'data'
 		if ('success' == data) {
 			this.load();
 			return;
 		}
 		
-		alert(data);
-		
+		// there was an error; parse it
+		if (data && data.length > 0) {
+		    if (data.match(/problem processing allergy report/i)) {
+		        var form = $('#allergy_form');
+		        
+		        // find all erroneous fields
+		        var reg = /column\s+"([^"]+)"/gi;
+		        var cols = reg.exec(data);
+		        for (var i = 1; i < cols.length; i += 2) {
+		            form.find('input[name="' + cols[i] + '"]').addClass('error');
+		        }
+		    }
+		}
+		else {
+    		alert("There was an error, please try again\n\n-> " + data);
+    	}
 		$('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
 	},
 });

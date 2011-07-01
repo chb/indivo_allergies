@@ -61,7 +61,7 @@ def after_auth(request):
     
     # is this the right token?
     if token_in_session['oauth_token'] != oauth_token:
-            return HttpResponse("oh oh bad token")
+        return HttpResponse("oh oh bad token")
     
     # get the indivo client and use the request token as the token for the exchange
     client = get_indivo_client(request, with_session_token=False)
@@ -104,6 +104,7 @@ def new_allergy(request):
     """
     Creates an allergy XML from POSTed values
     """
+    
     # parse the date (TODO: Really parse human input)
     date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.datetime.now().strftime('%Y-%m-%d')
     
@@ -147,7 +148,7 @@ def allergies(request):
     else:
         print 'FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...'
         return
-            
+    
     reports_et = parse_xml(xml)
     reports_et_list = list(reports_et)
     reports = {
