@@ -1,0 +1,53 @@
+body { background: #FAFAFA; padding-bottom: 1.5em; } /* don't inherit background, so we don't color the inside with record colors */
+h2 { margin-bottom: 1em; }
+td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
+
+#loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
+#loading.floating { float: right; width: 74%; margin: 0; text-align: left; }
+#loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
+
+#allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
+
+#one_allergy { width: 480px; height: auto; top: 0px; right: 80px; padding: 20px 25px; text-align: left; }
+#one_allergy h2 { float: left; margin: 0; }
+#one_allergy h3 {
+    margin: 0.1em 0 1em; text-align: right; line-height: 2.4;
+    font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
+}
+#one_allergy p { color: black; }
+#one_allergy p.bigger { margin-bottom: 0.5em; }
+.bottom_buttons p.meta { float: left; max-width: 75%; margin: 0; text-align: left; color: rgba(70,67,55,0.7); }
+
+#allergy_form { width: 480px; height: auto; top: 0px; right: 140px; padding: 20px 25px; text-align: left; }
+#allergy_form textarea { padding: 2px; }
+#allergy_form .full { float: right; width: 75%; }
+#allergy_form .short { width: 30%; }
+#allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
+#allergy_form p { margin: 0; padding-top: 1em; clear: right; }
+#allergy_form p:first-child { font-size: 1.2em; }
+
+.floating_window {
+    position: absolute; z-index: 2; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    border: 1px solid rgb(180,180,180); border-radius: 0.4em; background-color:rgb(245,245,245);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(252,252,252)), to(rgb(240,240,240)));
+    background-image:-moz-linear-gradient(top, rgb(250,250,250), rgb(235,235,235));
+    -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+#floating_close {
+    position: absolute; top: 5px; right: 5px; width: 16px; height: 16px;
+}
+
+td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
+.specifics { margin: 0.5em 0; padding: 0.5em 0; font-size: 0.9em; border-top: 1px dotted rgb(0,0,0); border-top-color: rgba(0,0,0,0.1); }
+.family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
+.meta { position: relative; font-size: 0.8em; text-align: right; color: rgba(70,67,55,0.7); }
+.meta a { margin-left: 1.5em; }
+.top_buttons { float: right; position: relative; margin: 0.75em 0; }
+.bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
+.active { text-shadow: 0 1px 4px rgba(64,128,0,0.85); }
+.bigger { font-size: 1.15em; }
+a.disabled:hover { border: none; cursor: default; }
+
+.warnsign {  }
+.status_inactive {  }
+.status_archived {  }
