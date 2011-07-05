@@ -137,6 +137,8 @@ def one_allergy(request):
     return
     
 def allergies(request):
+    from datetime import datetime
+    
     limit = int(request.GET.get('limit', 100)) # defaults
     offset = int(request.GET.get('offset', 0))
     client = get_indivo_client(request)
@@ -164,22 +166,37 @@ def allergies(request):
     }
     
     def _parse_report(report):
-        meta = report.find('Meta')
-        item = report.find('Item')
-        allergy = item[0]
-        
-        # FIXME: get metadata
-        # FIXME: get metadata
-        # FIXME: get metadata
+        meta = report.find('Meta')[0]
+        allergy = report.find('Item')[0]
         
         return {
-            'meta':  str(meta.text).strip(),
+            'meta': _parse_meta(meta),
             'item': _parse_allergy(allergy)
         }
     
-    def _parse_allergy(i):
+    def _parse_meta(tree):
         result = {}
-        for e in i:
+        for node in tree:
+            #print '--> ', node
+            if 'creator' == node.tag:
+                creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
+                result.update({'creator': creator})
+            elif 'createdAt' == node.tag:
+                #created = datetime.strptime(node.text, '%Y-%m-%dT%H:%M:%SZ')       # doesn't play well with simplejson
+                result.update({'createdAt': node.text})
+            elif 'original' == node.tag:
+                result.update({'original': node.attrib['id']})
+            elif 'latest' == node.tag:
+                result.update({'latest': node.attrib['id']})
+            else:
+                result.update({node.tag: node.text.strip() if node.text else ''})
+        print result
+        return result
+                
+    
+    def _parse_allergy(tree):
+        result = {}
+        for e in tree:
             if e.tag == NS+'dateDiagnosed':
                 result.update({'dateDiagnosed': e.text})
             elif e.tag == NS+'allergen':
