@@ -1,0 +1,34 @@
+
+<div id="one_allergy" class="floating_window">
+    <img id="floating_close" class="cancel_editing" src="jmvc/allergies/resources/close.png" alt="x" />
+    
+    <!-- STATUS and NAME/TYPE -->
+    <% if ("active" != meta.status) { %>
+    <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
+    <% } %>
+	<h2><%= item.name %></h2>
+	<h3><%= item.type %></h3>
+	
+	<!-- MAIN -->
+	<% if (item.reaction) { %>
+	<p class="details bigger"><%= item.reaction %></p>
+	<% } %>
+	<% if (item.specifics) { %>
+	<p class="details"><%= item.specifics %></p>
+	<% } %>
+	
+	<!-- META -->
+	<div class="bottom_buttons">
+    	<% var button_action = ("active" == meta.status) ? "Update" : "Action";
+	    if (item.diagnosedBy || item.dateDiagnosed) { %>
+	    <p class="meta">
+            Diagnosed 
+            <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
+            <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
+        </p>
+	    <% } %>
+		<input class="cancel_editing" type="button" value="<%= button_action %>" />
+	</div>
+	
+	<!-- HISTORY -->
+</div>

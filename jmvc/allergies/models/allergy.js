@@ -10,6 +10,7 @@ $.Model.extend('Allergies.Models.Allergy',
      * parameters to the api call to do this if using test data since all data have the same created_at in the db
      */
     findAll: function(params, success, error) {
+        var self = this;
         $.ajax({
             url: '/apps/allergies/allergies',
             type: 'get',
@@ -18,7 +19,8 @@ $.Model.extend('Allergies.Models.Allergy',
             success: this.callback(function(data, textStatus, xhr) {
                 // sort data by <Report><Item><dateMeasured>
                 // data.reports = _(data.reports).sortBy(function(r){ return(r.item.date_measured); }).reverse();
-                success(data);
+                success(self.wrapMany(data));
+                //success(data['summary'], self.wrapMany(data));
             }),
             error: error
         });
@@ -40,7 +42,7 @@ $.Model.extend('Allergies.Models.Allergy',
                 }
             }),
             error: error
-        }); 
+        });
     },
     
     update: function(id, params, success, error) {
@@ -49,7 +51,24 @@ $.Model.extend('Allergies.Models.Allergy',
         }
         
         // ...
-    }
+    },
 },
 /* @Prototype */
-{})
+{
+    /**
+     * Get the history
+     */
+    loadHistory: function(success, error) {
+        $.ajax({
+            url: '/apps/allergies/allergies/' + this.meta.id + '/history/',
+            type: 'get',
+            dataType: 'json',
+            success: this.callback(function(data, textStatus, xhr) {
+                if (success) {
+                    success(data, textStatus);
+                }
+            }),
+            error: error
+        }); 
+    },
+})

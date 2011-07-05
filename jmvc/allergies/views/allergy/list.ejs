@@ -8,7 +8,8 @@ if (reports && reports.length > 0) {
     });
 
     _(reports_sorted.reverse()).each(function(report) {
-        var date = report.item.dateDiagnosed;
+        var status = report.meta.status;
+        var dateDiag = report.item.dateDiagnosed;
         var doc = report.item.diagnosedBy;
         var name = report.item.name;
         var type = report.item.type;
@@ -27,9 +28,9 @@ if (reports && reports.length > 0) {
         <% } %>
             <div class="meta">
                 <%= doc %>
-                <% if (date && doc) { %>, <% } %>
-                <%= date %>
-                <a class="update_allergy" href="javascript:void(0);">Update</a>
+                <% if (dateDiag && doc) { %>, <% } %>
+                <%= dateDiag %>
+                <a class="allergy_details" href="javascript:void(0);" <%= report %>>Details</a>
             </div>
         </td>
     </tr>
