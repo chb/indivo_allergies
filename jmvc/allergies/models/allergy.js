@@ -63,12 +63,39 @@ $.Model.extend('Allergies.Models.Allergy',
             url: '/apps/allergies/allergies/' + this.meta.id + '/history/',
             type: 'get',
             dataType: 'json',
-            success: this.callback(function(data, textStatus, xhr) {
+            success: function(data, textStatus, xhr) {
                 if (success) {
                     success(data, textStatus);
                 }
-            }),
-            error: error
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (error) {
+                    error(textStatus);
+                }
+            }
+        });
+    },
+    
+    
+    /**
+     * Update status
+     */
+    setStatus: function(status, reason, success, error) {
+        $.ajax({
+            url: '/apps/allergies/allergies/' + this.meta.id + '/set-status',
+            type: 'post',
+            data: { status: status, reason: reason },
+            dataType: 'json',
+            success: function(data, textStatus, xhr) {
+                if (success) {
+                    success(data, textStatus);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (error) {
+                    error(textStatus);
+                }
+            }
         }); 
     },
 })

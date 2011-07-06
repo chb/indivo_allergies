@@ -27,10 +27,14 @@
                 <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
             </p>
             <% }
-            var archive_title = ("archived" == meta.status) ? "Reactivate" : "Archive";
-            var void_title = ("void" == meta.status) ? "Unvoid" : "Void"; %>
+            var archive_title = ("archived" == meta.status) ? "Reactivate..." : "Archive...";
+            var void_title = ("void" == meta.status) ? "Unvoid..." : "Void..."; %>
             <input id="start_editing" type="submit" value="Update" />
             <div id="action_panel">
+                <div id="action_area">
+                    <img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="" />
+                    <span id="action_text">funny</span>
+                </div>
                 <input id="cancel_editing" type="button" value="Cancel" />
                 <input class="action_button bold" type="button" value="Edit" <% if ("active" != meta.status) { %>disabled="disabled"<% } %> data="edit" <%= this %> />
                 <input class="action_button" type="button" value="<%= archive_title %>" data="archive" <%= this %> />

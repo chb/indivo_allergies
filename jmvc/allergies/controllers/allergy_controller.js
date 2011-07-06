@@ -68,11 +68,11 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    this.alignFloatingDivTo(det, link);
 		
 		// load history
-		//allergy.loadHistory(this.callback('showHistory'));
+		allergy.loadHistory(this.callback('showHistory'));
 	},
 	
-	showHistory: function() {
-	    
+	showHistory: function(data, textStatus, xhr) {
+	    //alert('History: ' + data);
 	},
 	
 	'#start_editing click': function(elem) {
@@ -80,8 +80,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    $(elem).fadeTo(0, 0);            // can't use hide() here as the parent div will collapse otherwise. We need the button in the layout
 	},
 	'#cancel_editing click': function() {
-	    $('#action_panel').fadeOut('fast');
-	    $('#start_editing').fadeTo('fast', 1);
+	    this.hideActionButtons();
 	},
 	'.action_button click': function(elem) {
 	    var but = $(elem);
@@ -97,7 +96,58 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	        case 'edit':
 	            this.showFormFor(button, allergy);
 	            break;
+	        case 'archive':
+	            break;
+	        case 'void':
+	            this.askToVoid(allergy);
+	            break;
+	        default:
+	            alert("Unknown actionButtonAction '" + action + '"');
+	            break;
 	    }
+	},
+	hideActionButtons: function() {
+	    $('#action_panel').fadeOut('fast');
+	    $('#start_editing').fadeTo('fast', 1);
+	},
+	indicateAction: function(text) {
+	    $('#action_panel').find('input').attr('disabled', 'disabled');
+	    $('#action_area').show();
+	    $('#action_text').text(text);
+	},
+	actionDone: function() {
+	    $('#action_panel').find('input').removeAttr('disabled');
+	    $('#action_area').hide();
+	    $('#action_text').text('');
+	},
+	
+	
+	// ** Handling actions
+	askToVoid: function(allergy) {
+	    var warning = "Reason to void this allergy?";
+	    this.askForConfirmation(allergy, warning, true, "Void", this.callback('voidAllergy'));
+	},
+	voidAllergy: function(allergy, reason) {
+	    if (!allergy || !reason) {
+	        alert("You must specify a reason when voiding");
+    	}
+    	else {
+    	    this.hideConfirmation();
+    	    this.indicateAction('Voiding...');
+    	    allergy.setStatus('void', reason, this.callback('didVoidAllergy'));
+    	}
+	},
+	didVoidAllergy: function(data, textStatus) {
+	    //alert(data + ' | ' + textStatus);
+	    if ('success' == textStatus) {
+	        // TODO: Once we get the allergy object back, update the view
+	        //$('#one_allergy').html(this.view('details', data));
+	        this.hideActionButtons();
+	    }
+	    else {
+    	    alert('Failed to void the allergy: ' + data);
+    	}
+	    this.actionDone();
 	},
 	
 	
@@ -178,7 +228,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	// ** Handling the floating div
 	floatingDivWillShow: function(from_link) {
 	    $('#allergy_list').css('opacity', 0.5).css('opacity', 0.5).find('.allergy_details').addClass('disabled');
-		from_link.removeClass('disabled').addClass('active');
+	    if (from_link) {
+    		from_link.removeClass('disabled').addClass('active');
+    	}
 		$('#add_allergy').attr('disabled', 'disabled');
 	},
 	dismissFloatingDiv: function(button) {
@@ -194,7 +246,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    var ref_elem = div.parent().find('#add_allergy');
 	    
 	    // try to align the midline of the link with the midlines of the view's close button
-		var desired_offset = to_link.offset().top + (to_link.height() / 2) - ref_elem.offset().top;        // link's midline offset relative to ref_elem
+		var desired_offset = to_link ? (to_link.offset().top + (to_link.height() / 2) - ref_elem.offset().top) : 0;        // link's midline offset relative to ref_elem
 		var div_buttons = div.find('.bottom_buttons');
 		var div_button = div_buttons.find('input[type="submit"]').first();
 		var button_offset = div_buttons.position().top + div_button.position().top + (div_button.height() / 1.5);
@@ -227,5 +279,56 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	        }
 	    }
 	    this.dismissFloatingDiv(button);
+	},
+	
+	
+	/*
+	 * Confirmation dialogs
+	 * 
+	 * Used to confirm an action to be applied to an object.
+	 * The confirm-callback gets the object as first argument and text entered as second argument
+	 * The decline-callback gets no arguments and if omitted, the confirmatino dialog will be hidden
+	 **/
+	confirmation: {},
+	askForConfirmation: function(obj, text, show_input, confirm_text, confirm, decline) {
+	    var parent = $('#one_allergy').is('*') ? $('#one_allergy') : ($('#allergy_form').is('*') ? $('#allergy_form') : null);
+	    if (parent && confirm && 'function' == typeof(confirm)) {
+	        this.confirmation.confirm = confirm;
+	        this.confirmation.decline = decline;
+	        this.confirmation.object = obj;
+	        
+	        var dialog = $(this.view('confirm', {'text': text, 'confirm_text': confirm_text }));
+	        parent.append(dialog);
+	        if (show_input) {
+	            $('#confirm_input').show().focus();
+	        }
+	        var box = $('#confirm_box');
+	        var m_top = (dialog.innerHeight() - box.outerHeight()) / 2;
+	        box.css('margin-top', m_top + 'px');
+	    }
+	},
+	'#confirm_box input[type="submit"] click': function() {
+	    if (this.confirmation.confirm && 'function' == typeof(this.confirmation.confirm)) {
+	        this.confirmation.confirm(this.confirmation.object, $('#confirm_input').val());
+	    }
+	    else {
+	        alert("Programming error: No action defined for confirmation!");
+	    }
+	},
+	'#confirm_box input[type="reset"] click': function() {
+	    if (this.confirmation.decline && 'function' == typeof(this.confirmation.decline)) {
+	        this.confirmation.decline();
+	        this.didHideConfirmation();
+	    }
+	    else {
+	        this.hideConfirmation();
+	    }
+	},
+	hideConfirmation: function() {
+	    $('#confirm').fadeOut('fast', function() { $(this).remove(); });
+	    this.didHideConfirmation();
+	},
+	didHideConfirmation: function() {
+	    this.confirmation = {};
 	},
 });

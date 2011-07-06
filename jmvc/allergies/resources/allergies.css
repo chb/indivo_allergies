@@ -8,16 +8,18 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 #allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
 
+/* detail view */
 #one_allergy { width: 520px; height: auto; top: 0px; right: 80px; text-align: left; }
 #one_allergy h2 { float: left; margin: 0; }
 #one_allergy h3 {
-    margin: 0.1em 0 1em; text-align: right; line-height: 2.4;
+    margin: 0.1em 0 1em; text-align: right; line-height: 2.4; min-height: 5ex;
     font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
 }
 #one_allergy p { color: black; }
 #one_allergy p.bigger { margin-bottom: 0.5em; }
 .bottom_buttons p.meta { float: left; max-width: 75%; margin: 0; text-align: left; color: rgba(70,67,55,0.7); }
 
+/* allergy form */
 #allergy_form { width: 520px; height: auto; top: 0px; right: 140px; text-align: left; }
 #allergy_form textarea { padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
@@ -26,27 +28,46 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #allergy_form p { margin: 0; padding-top: 1em; clear: right; }
 #allergy_form p:first-child { font-size: 1.2em; }
 
+/* floating window */
 .floating_window {
     position: absolute; z-index: 2; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     border: 1px solid rgb(160,160,160); border-radius: 0.4em; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 .floating_window_gradient {
-    padding: 20px 25px; border-radius: 0.4em;
+    min-height: 160px; padding: 20px 25px; border-radius: 0.4em;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 #floating_close { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; }
 #start_editing { font-weight: bold; }
 #action_panel {
-    display: none; position: absolute; bottom: -8px; right: -8px; width: 200px; height: 64px;
+    display: none; position: absolute; bottom: -8px; right: -8px; width: 48%; height: 64px;
     padding: 8px; text-align: left;
     border: 1px solid rgba(0,0,0,0.6); border-radius: 0.4em; box-shadow: 0 1px 0 rgba(255,255,255,0.8);
     background: url("rubber_grip.png") top left repeat rgba(0,0,0,0.2);
 }
 #action_panel .bold { float: right; }
 #action_panel #cancel_editing { position: absolute; bottom: 8px; right: 8px; }
+#action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
+#action_area img { margin-right: 0.25em; vertical-align: -8%; }
 
+/* confirmation dialog */
+#confirm {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); border-radius: inherit;
+}
+#confirm_box {
+    width: 50%; margin: 5% auto 0; padding: 8px; text-align: right; vertical-align: middle;
+    border: 1px solid rgb(80,80,80); border-radius: 0.4em; background-color: white; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(252,252,252)), to(rgb(235,235,235)));
+    background-image:-moz-linear-gradient(top, rgb(252,252,252), rgb(235,235,235));
+}
+#confirm_box p { text-align: center; }
+#confirm_box input[type="text"] { width: 80%; }
+#confirm_box .bottom_buttons { padding-top: 0.5em; }
+
+/* generic */
 td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
 .specifics { margin: 0.5em 0; padding: 0.5em 0; font-size: 0.9em; border-top: 1px dotted rgb(0,0,0); border-top-color: rgba(0,0,0,0.1); }
 .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
@@ -61,6 +82,7 @@ td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color
 .red { color: #800; }
 a.disabled:hover { border: none; cursor: default; }
 
+/* status */
 .warnsign {  }
 .status_inactive {  }
 .status_archived {  }
