@@ -100,10 +100,13 @@ def index(request):
              'INDIVO_UI_APP_CSS': settings.INDIVO_UI_SERVER_BASE+'/jmvc/ui/resources/css/ui.css'}
     )
 
+
 def new_allergy(request):
     """
-    Creates an allergy XML from POSTed values
+    Creates an allergy XML from POSTed values and submits the document to Indivo server
     """
+    if 'POST' != request.method:
+        return HttpResponse('error')
     
     # parse the date (TODO: Really parse human input)
     date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.datetime.now().strftime('%Y-%m-%d')
@@ -113,7 +116,7 @@ def new_allergy(request):
                 'coding_system':    'snomed',
                 'date_diagnosed':   date_diag,
                 'allergen_type':    request.POST.get('allergen_type', 'unknown'),
-                'allergen_name':    request.POST.get('allergen_name', 'unknown'),
+                'allergen_name':    request.POST.get('allergen_name', ''),
                 'reaction':         request.POST.get('reaction', 'unknown'),
                 'specifics':        request.POST.get('specifics', ''),
                 'diagnosed_by' :    request.POST.get('diagnosed_by', '')
@@ -129,14 +132,52 @@ def new_allergy(request):
     if 200 == int(status):
         status = 'success'
     else:
-        status = res.response['response_data']
+        status = res.response['response_data'] if res.response['response_data'] else status
     
     return HttpResponse(status)
 
+
 def one_allergy(request):
-    return
+    return HttpResponse('["not implemented"]')
+    #return HttpResonse(simplejson.dumps(reports))
+
+
+def allergy_history(request, allergy_id):
+    """
+    Fetches allergy document versions and document status history from Indivo server
+    """
     
+    return HttpResponse('["test"]', mimetype='text/plain')
+    #return HttpResonse(simplejson.dumps(reports))
+
+
+def set_allergy_status(request, allergy_id):
+    if 'POST' != request.method:
+        return HttpResponse('error')
+    
+    record_id = request.session['record_id']
+    client = get_indivo_client(request)
+    data = { 'status': request.POST.get('status', ''), 'reason': request.POST.get('reason', '') }
+    res = client.set_document_status(record_id = record_id, document_id = allergy_id,  data = data)
+    
+    # we always return a 200 HttpResponse, let's deal with errors in the controller
+    status = res.response['response_status']
+    data = None
+    if 200 == int(status):
+        # TODO: Return new parsed allergy XML here
+        #res = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
+        # parse...
+        data = 'success'
+    else:
+        data = res.response['response_data'] if res.response['response_data'] else status
+    
+    return HttpResponse(simplejson.dumps(data))
+
+
 def allergies(request):
+    """
+    Returns a list of allergies for the given record
+    """
     from datetime import datetime
     
     limit = int(request.GET.get('limit', 100)) # defaults
@@ -162,7 +203,7 @@ def allergies(request):
             'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
             'current_page':         (offset / limit) + 1        # 1-index this
         },
-        'reports': []
+        'data': []
     }
     
     def _parse_report(report):
@@ -175,7 +216,7 @@ def allergies(request):
         }
     
     def _parse_meta(tree):
-        result = {}
+        result = {'id': tree.attrib['id']}
         for node in tree:
             #print '--> ', node
             if 'creator' == node.tag:
@@ -190,7 +231,6 @@ def allergies(request):
                 result.update({'latest': node.attrib['id']})
             else:
                 result.update({node.tag: node.text.strip() if node.text else ''})
-        print result
         return result
                 
     
@@ -221,7 +261,7 @@ def allergies(request):
         parsed_report = _parse_report(r)
 
         if parsed_report:
-            reports['reports'].append(parsed_report)
+            reports['data'].append(parsed_report)
         else:
             continue
             
