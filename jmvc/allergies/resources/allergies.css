@@ -19,6 +19,13 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #one_allergy p.bigger { margin-bottom: 0.5em; }
 .bottom_buttons p.meta { float: left; max-width: 75%; margin: 0; text-align: left; color: rgba(70,67,55,0.7); }
 
+.warnsign {
+    height: 1.9em; line-height: 2em; margin:-21px -26px 0; padding: 0 25px;
+    border: 1px solid rgb(120,120,120); border-radius: 0.4em 0.4em 0 0;
+    color: white; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
+}
+
 /* allergy form */
 #allergy_form { width: 520px; height: auto; top: 0px; right: 140px; text-align: left; }
 #allergy_form textarea { padding: 2px; }
@@ -26,7 +33,6 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #allergy_form .short { width: 30%; }
 #allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 #allergy_form p { margin: 0; padding-top: 1em; clear: right; }
-#allergy_form p:first-child { font-size: 1.2em; }
 
 /* floating window */
 .floating_window {

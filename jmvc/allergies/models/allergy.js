@@ -17,10 +17,7 @@ $.Model.extend('Allergies.Models.Allergy',
             dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
-                // sort data by <Report><Item><dateMeasured>
-                // data.reports = _(data.reports).sortBy(function(r){ return(r.item.date_measured); }).reverse();
-                success(self.wrapMany(data));
-                //success(data['summary'], self.wrapMany(data));
+                success(self.wrapMany(data));               // wrapMany is deprecated!
             }),
             error: error
         });
@@ -88,7 +85,7 @@ $.Model.extend('Allergies.Models.Allergy',
             dataType: 'json',
             success: function(data, textStatus, xhr) {
                 if (success) {
-                    success(data, textStatus);
+                    success(Allergies.Models.Allergy.wrapMany(data)[0], textStatus);        // wrapMany is deprecated!
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {

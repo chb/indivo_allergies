@@ -138,10 +138,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
     	}
 	},
 	didVoidAllergy: function(data, textStatus) {
-	    //alert(data + ' | ' + textStatus);
 	    if ('success' == textStatus) {
-	        // TODO: Once we get the allergy object back, update the view
-	        //$('#one_allergy').html(this.view('details', data));
+	        var details = $(this.view('details', data));
+	        $('#one_allergy').html(details.html());
 	        this.hideActionButtons();
 	    }
 	    else {
@@ -195,6 +194,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
             this.floatingDivWillShow(link);
 		}
 		
+		form.find('input[name="allergen_name"]').focus();
         this.alignFloatingDivTo(form, link);
 	},
 	

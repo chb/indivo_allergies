@@ -147,31 +147,40 @@ def allergy_history(request, allergy_id):
     Fetches allergy document versions and document status history from Indivo server
     """
     
+    # client.read_document_status_history(self, app_info,record_id='', document_id='',  data=None, debug=False)
+    #client.read_document_versions(self, app_info,record_id='', document_id='', parameters='',  data=None, debug=False)
     return HttpResponse('["test"]', mimetype='text/plain')
     #return HttpResonse(simplejson.dumps(reports))
 
 
 def set_allergy_status(request, allergy_id):
+    ret = {}
     if 'POST' != request.method:
-        return HttpResponse('error')
-    
-    record_id = request.session['record_id']
-    client = get_indivo_client(request)
-    data = { 'status': request.POST.get('status', ''), 'reason': request.POST.get('reason', '') }
-    res = client.set_document_status(record_id = record_id, document_id = allergy_id,  data = data)
-    
-    # we always return a 200 HttpResponse, let's deal with errors in the controller
-    status = res.response['response_status']
-    data = None
-    if 200 == int(status):
-        # TODO: Return new parsed allergy XML here
-        #res = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
-        # parse...
-        data = 'success'
+        ret = { 'status': 'error', 'data': 'method not allowed' }
     else:
-        data = res.response['response_data'] if res.response['response_data'] else status
+        record_id = request.session['record_id']
+        client = get_indivo_client(request)
+        data = { 'status': request.POST.get('status', ''), 'reason': request.POST.get('reason', '') }
+        res = client.set_document_status(record_id = record_id, document_id = allergy_id,  data = data)
+        
+        # we always return a 200 HttpResponse, let's deal with errors in the controller
+        status = res.response['response_status']
+        if 200 == int(status):
+            
+            # success, give us back the document
+            meta_xml = client.read_document_meta(record_id = record_id, document_id = allergy_id).response['response_data']
+            meta = parse_xml(meta_xml)
+            doc_xml = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
+            doc = parse_xml(doc_xml)
+            report = {
+                'meta': _parse_meta(meta),
+                'item': _parse_allergy(doc)
+            }
+            ret = { 'status': 'success', 'data': [ report ] }
+        else:
+            ret = { 'status': 'error', 'data': res.response['response_data'] if res.response['response_data'] else status }
     
-    return HttpResponse(simplejson.dumps(data))
+    return HttpResponse(simplejson.dumps(ret))
 
 
 def allergies(request):
@@ -206,51 +215,6 @@ def allergies(request):
         'data': []
     }
     
-    def _parse_report(report):
-        meta = report.find('Meta')[0]
-        allergy = report.find('Item')[0]
-        
-        return {
-            'meta': _parse_meta(meta),
-            'item': _parse_allergy(allergy)
-        }
-    
-    def _parse_meta(tree):
-        result = {'id': tree.attrib['id']}
-        for node in tree:
-            #print '--> ', node
-            if 'creator' == node.tag:
-                creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
-                result.update({'creator': creator})
-            elif 'createdAt' == node.tag:
-                #created = datetime.strptime(node.text, '%Y-%m-%dT%H:%M:%SZ')       # doesn't play well with simplejson
-                result.update({'createdAt': node.text})
-            elif 'original' == node.tag:
-                result.update({'original': node.attrib['id']})
-            elif 'latest' == node.tag:
-                result.update({'latest': node.attrib['id']})
-            else:
-                result.update({node.tag: node.text.strip() if node.text else ''})
-        return result
-                
-    
-    def _parse_allergy(tree):
-        result = {}
-        for e in tree:
-            if e.tag == NS+'dateDiagnosed':
-                result.update({'dateDiagnosed': e.text})
-            elif e.tag == NS+'allergen':
-                for e2 in e:
-                    if e2.tag == NS+'type':
-                        result.update({'type': e2.text.strip()})
-                    elif e2.tag == NS+'name':
-                        result.update({'name': e2.text.strip()})
-            elif e.tag == NS+'reaction':
-                result.update({'reaction': e.text.strip()})
-            elif e.tag == NS+'specifics':
-                result.update({'specifics': e.text.strip()})
-        return result
-    
 
     # note: we depend on the reports being ordered by date_measured
     # it's ascending by default, hence the reverse()
@@ -259,7 +223,7 @@ def allergies(request):
     
     for r in reports_for_parsing:
         parsed_report = _parse_report(r)
-
+        
         if parsed_report:
             reports['data'].append(parsed_report)
         else:
@@ -268,3 +232,69 @@ def allergies(request):
     # print simplejson.dumps(reports)
     
     return HttpResponse(simplejson.dumps(reports), mimetype='text/plain')
+
+
+
+# Only used by class instances
+def _parse_report(report):
+    meta = report.find('Meta')
+    meta = meta[0] if meta is not None and len(meta) > 0 else None
+    allergy = report.find('Item')
+    allergy = allergy[0] if allergy is not None and len(allergy) > 0 else None
+    
+    if not allergy:
+        import pdb
+        pdb.set_trace()
+        allergy = report                    # assume we were only given the allergy XML tree
+    
+    print meta, ' -- ', allergy
+    
+    return {
+        'meta': _parse_meta(meta),
+        'item': _parse_allergy(allergy)
+    }
+
+
+def _parse_meta(tree):
+    if not tree:
+        return None
+    
+    result = {'id': tree.attrib['id']}
+    for node in tree:
+        #print '--> ', node
+        if 'creator' == node.tag:
+            creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
+            result.update({'creator': creator})
+        elif 'createdAt' == node.tag:
+            #created = datetime.strptime(node.text, '%Y-%m-%dT%H:%M:%SZ')       # doesn't play well with simplejson
+            result.update({'createdAt': node.text})
+        elif 'original' == node.tag:
+            result.update({'original': node.attrib['id']})
+        elif 'latest' == node.tag:
+            result.update({'latest': node.attrib['id']})
+        else:
+            result.update({node.tag: node.text.strip() if node.text else ''})
+    
+    return result
+            
+
+def _parse_allergy(tree):
+    result = {}
+    
+    if tree is not None and len(tree) > 0:
+        for e in tree:
+            if e.tag == NS+'dateDiagnosed':
+                result.update({'dateDiagnosed': e.text})
+            elif e.tag == NS+'allergen':
+                for e2 in e:
+                    if e2.tag == NS+'type':
+                        result.update({'type': e2.text.strip() if e2.text is not None else '' })
+                    elif e2.tag == NS+'name':
+                        result.update({'name': e2.text.strip() if e2.text is not None else '' })
+            elif e.tag == NS+'reaction':
+                result.update({'reaction': e.text.strip() if e.text is not None else '' })
+            elif e.tag == NS+'specifics':
+                result.update({'specifics': e.text.strip() if e.text is not None else '' })
+    
+    return result
+
