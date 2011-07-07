@@ -189,46 +189,61 @@ def allergies(request):
     """
     from datetime import datetime
     
+    # process request attributes
     limit = int(request.GET.get('limit', 100)) # defaults
     offset = int(request.GET.get('offset', 0))
+    status = request.GET.get('status', 'active')
+    stat_arr = status.split('|')
+    if len(stat_arr) < 1:
+        stat_arr = [ 'active' ]
     client = get_indivo_client(request)
     
     if request.session.has_key('record_id'):
         record_id = request.session['record_id']
-        record = parse_xml(client.read_record(record_id = record_id).response['response_data'])
-        xml = client.read_allergies(record_id = record_id).response['response_data']
     else:
         print 'FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...'
         return
     
-    reports_et = parse_xml(xml)
-    reports_et_list = list(reports_et)
-    reports = {
-        'summary': {
-            'total_document_count': reports_et_list[0].attrib['total_document_count'],
-            'limit':                reports_et_list[0].attrib['limit'],
-            'offset':               reports_et_list[0].attrib['offset'],
-            'order_by':             reports_et_list[0].attrib['order_by'],
-            'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
-            'current_page':         (offset / limit) + 1        # 1-index this
-        },
-        'data': []
-    }
+    # can only get documents with one status at a time, so loop over the desired status here
+    # and collect all reports to be parsed in a set
+    num_docs = 0
+    all_reports = []
+    for stat in stat_arr:
+        xml = client.read_allergies(record_id = record_id, parameters = { 'status': stat }).response['response_data']
+        
+        reports_et = parse_xml(xml)
+        reports_et_list = list(reports_et)
+        num_docs += int(reports_et_list[0].attrib['total_document_count'])
+        # don't bother about limit, offset, order_by and consort for now...
+        
+        # note: we depend on the reports being ordered by date_measured
+        # it's ascending by default, hence the reverse()
+        reports_for_parsing = list(reports_et.findall('Report'))
+        all_reports.extend(reports_for_parsing)
     
-
-    # note: we depend on the reports being ordered by date_measured
-    # it's ascending by default, hence the reverse()
-    reports_for_parsing = list(reports_et.findall('Report'))
-    reports_for_parsing.reverse()
-    
-    for r in reports_for_parsing:
+    # parse all reports
+    parsed_reports = []
+    for r in all_reports:
         parsed_report = _parse_report(r)
         
         if parsed_report:
-            reports['data'].append(parsed_report)
-        else:
-            continue
-            
+            parsed_reports.append(parsed_report)
+    
+    # sort reports
+    
+    
+    # build response
+    reports = {
+        'summary': {
+            'total_document_count': num_docs,
+          # 'limit':                reports_et_list[0].attrib['limit'],
+          # 'offset':               reports_et_list[0].attrib['offset'],
+          # 'order_by':             reports_et_list[0].attrib['order_by'],
+          # 'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
+          # 'current_page':         (offset / limit) + 1        # 1-index this
+        },
+        'data': parsed_reports
+    }
     # print simplejson.dumps(reports)
     
     return HttpResponse(simplejson.dumps(reports), mimetype='text/plain')
@@ -242,12 +257,8 @@ def _parse_report(report):
     allergy = report.find('Item')
     allergy = allergy[0] if allergy is not None and len(allergy) > 0 else None
     
-    if not allergy:
-        import pdb
-        pdb.set_trace()
+    if allergy is None:
         allergy = report                    # assume we were only given the allergy XML tree
-    
-    print meta, ' -- ', allergy
     
     return {
         'meta': _parse_meta(meta),
@@ -256,12 +267,11 @@ def _parse_report(report):
 
 
 def _parse_meta(tree):
-    if not tree:
+    if tree is None:
         return None
     
     result = {'id': tree.attrib['id']}
     for node in tree:
-        #print '--> ', node
         if 'creator' == node.tag:
             creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
             result.update({'creator': creator})

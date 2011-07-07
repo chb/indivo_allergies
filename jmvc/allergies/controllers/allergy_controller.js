@@ -11,6 +11,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 },
 /* @Prototype */
 {
+    statusToGet: [ 'active' ],
+    
 	ready: function() {
 		if (!$("#allergy").is('*')) {
 			$(document.body).append($('<div/>').attr('id','allergy'));
@@ -19,12 +21,13 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	load: function() {
-		Allergies.Models.Allergy.findAll({}, this.callback('list'));
+		Allergies.Models.Allergy.findAll({ 'status': this.statusToGet.join('|') }, this.callback('list'));
 	},
 	
 	list: function(allergies) {
 		// we can use a callback here if we need strict ordering (e.g. for iframe resize)
 		var _this = this;
+		//this.updateFilterButtons();
 		var callback = function() {
 			$('#loading').hide();
 		};
@@ -34,11 +37,47 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 					'reports':	allergies,
 					'summary':	allergies.summary
 				}));
+			_this.updateFilterButtons(_this.statusToGet);
 			if (callback) {
 				callback();
 			}
 		};
 		_show(callback);
+	},
+	
+	
+	// ** document filter
+	'#filter_buttons input click': function(button) {
+	    var stat = button.val();
+	    
+	    // activate status
+	    if (button.get(0).checked) {
+	        this.statusToGet.push(stat);
+	    }
+	    
+	    // disable status
+	    else {
+	        if (this.statusToGet.length <= 1) {
+	            button.attr('checked', true);
+	            return;
+	        }
+	        for (var i = 0; i < this.statusToGet.length; i++) {
+	            if (this.statusToGet[i] == stat) {
+	                this.statusToGet.splice(i, 1);
+	                break;
+	            }
+	        }
+	    }
+	    this.statusToGet = _.uniq(this.statusToGet);
+	    this.load();
+	},
+	updateFilterButtons: function(enabled) {
+	    if ('object' != typeof(enabled)) {
+	        return;
+	    }
+	    $('#filter_buttons').find('input[type="checkbox"]').each(function(i, elem) {
+	                                                                    elem.checked = (enabled.indexOf($(elem).val()) >= 0);
+	                                                                });
 	},
 	
 	
@@ -232,6 +271,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
     		from_link.removeClass('disabled').addClass('active');
     	}
 		$('#add_allergy').attr('disabled', 'disabled');
+		$('#filter_buttons').find('input[type="checkbox"]').attr('disabled', 'disabled');
 	},
 	dismissFloatingDiv: function(button) {
 	    this.formHideWillShowDetails = false;
@@ -241,6 +281,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    button.attr('disabled', 'disabled');
         $('#add_allergy').removeAttr('disabled');
         $('#allergy_list').css('opacity', 1).find('.allergy_details').removeClass('disabled').removeClass('active');
+        $('#filter_buttons').find('input[type="checkbox"]').removeAttr('disabled');
 	},
 	alignFloatingDivTo: function(div, to_link) {
 	    var ref_elem = div.parent().find('#add_allergy');

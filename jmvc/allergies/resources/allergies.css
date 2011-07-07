@@ -6,7 +6,12 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #loading.floating { float: right; width: 74%; margin: 0; text-align: left; }
 #loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
 
+#top_buttons { float: right; position: relative; margin: 0.75em 0; }
+#filter_buttons { float: right; width: 70%; line-height: 3.6em; }
+#filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
+#filter_buttons label { margin-right: 1.5em; }
 #allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
+
 
 /* detail view */
 #one_allergy { width: 520px; height: auto; top: 0px; right: 80px; text-align: left; }
@@ -26,6 +31,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
 }
 
+
 /* allergy form */
 #allergy_form { width: 520px; height: auto; top: 0px; right: 140px; text-align: left; }
 #allergy_form textarea { padding: 2px; }
@@ -33,6 +39,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #allergy_form .short { width: 30%; }
 #allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 #allergy_form p { margin: 0; padding-top: 1em; clear: right; }
+
 
 /* floating window */
 .floating_window {
@@ -79,7 +86,6 @@ td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color
 .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
 .meta { position: relative; font-size: 0.8em; text-align: right; color: rgba(70,67,55,0.7); }
 .meta a { margin-left: 1.5em; }
-.top_buttons { float: right; position: relative; margin: 0.75em 0; }
 .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
 .bottom_buttons input[type="submit"] { font-weight: bold; }
 .active { text-shadow: 0 1px 4px rgba(64,128,0,0.85); }

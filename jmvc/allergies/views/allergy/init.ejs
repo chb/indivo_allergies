@@ -3,11 +3,17 @@
     <h3><img class="loader" src="./resources/ajax-loader.gif" />Loading</h3>
 </div>
 
-<div class="top_buttons">
+<div id="top_buttons">
     <input id="add_allergy" type="button" value="Report an allergy" />
 </div>
 
-<div style="width: 25%;">
+<div style="width: 75%;">
+    <div id="filter_buttons">
+        <input type="checkbox" id="chk_get_active" value="active" /><label for="chk_get_active">Active</label>
+        <input type="checkbox" id="chk_get_archived" value="archived" /><label for="chk_get_archived">Archived</label>
+        <input type="checkbox" id="chk_get_void" value="void" /><label for="chk_get_void">Voided</label>
+    </div>
+    
     <h2>Allergies</h2>
 </div>
 
