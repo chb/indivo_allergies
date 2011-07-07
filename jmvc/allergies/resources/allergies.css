@@ -9,6 +9,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #top_buttons { float: right; position: relative; margin: 0.75em 0; }
 #filter_buttons { float: right; width: 70%; line-height: 3.6em; }
 #filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
+#filter_buttons img { margin-right: 0.7em; vertical-align: -5%; }
 #filter_buttons label { margin-right: 1.5em; }
 #allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
 

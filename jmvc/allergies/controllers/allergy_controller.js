@@ -68,6 +68,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	            }
 	        }
 	    }
+	    
+	    // fire off
+	    button.replaceWith('<img src="jmvc/allergies/resources/spinner-small.gif" alt="" />');
 	    this.statusToGet = _.uniq(this.statusToGet);
 	    this.load();
 	},
