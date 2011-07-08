@@ -17,12 +17,22 @@
     <h2>Allergies</h2>
 </div>
 
-<table id="allergy_list" class="light">
-    <colgroup>
-        <col width="30%" />
-        <col />
-    </colgroup>
-    <tbody>
-        <%= view('./views/allergy/list', { 'reports': reports }) %>
-    </tbody>
-</table>
+<div id="allergy_list" class="light">
+<%
+if (reports && reports.length > 0) {
+    var reports_sorted = _(reports).sortBy(function(r){
+        if (typeof(r.item.dateDiagnosed) != 'undefined')
+            return r.item.dateDiagnosed;
+        else
+            return '-99999';
+    });
+
+    _(reports_sorted.reverse()).each(function(report) {
+%>
+    <%= view('./views/allergy/list', report) %>
+<% })
+}
+else { %>
+    <h3 class="attention">No reports</h3>
+<% } %>
+</div>

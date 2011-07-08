@@ -1,44 +1,28 @@
-<%
-if (reports && reports.length > 0) {
-    var reports_sorted = _(reports).sortBy(function(r){
-        if (typeof(r.item.dateDiagnosed) != 'undefined')
-            return r.item.dateDiagnosed;
-        else
-            return '-99999';
-    });
-
-    _(reports_sorted.reverse()).each(function(report) {
-        var id = report.meta.id
-        var status = report.meta.status;
-        var dateDiag = report.item.dateDiagnosed;
-        var doc = report.item.diagnosedBy;
-        var name = report.item.name;
-        var type = report.item.type;
-        var reaction = report.item.reaction;
-        var specifics = report.item.specifics;
-%>
-    <tr id="allergy_row_<%= id %>">
-        <td><%= name %>
-        <% if (type) { %>
-            <div class="family"><%= type %></div>
+<div class="one_allergy" <%= this %>>
+    <div class="one_allergy_inner">
+        
+        <!-- STATUS and NAME/TYPE -->
+        <% if ("active" != meta.status) { %>
+        <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
         <% } %>
-        </td>
-        <td class="details"><%= reaction %>
-        <% if (specifics) { %>
-            <div class="specifics"><%= specifics %></div>
+        <h2><%= item.name %></h2>
+        <h3><%= item.type %></h3>
+        
+        <!-- MAIN -->
+        <% if (item.reaction) { %>
+        <p class="details bigger"><%= item.reaction %></p>
         <% } %>
-            <div class="meta">
-                <%= doc %>
-                <% if (dateDiag && doc) { %>, <% } %>
-                <%= dateDiag %>
-                <a class="allergy_details" href="javascript:void(0);" <%= report %>>Details</a>
-            </div>
-        </td>
-    </tr>
-<% })
-}
-else { %>
-    <tr>
-        <td colspan="2"><h3>No reports</h3></td>
-    </tr>
-<% } %>
+        <% if (item.specifics) { %>
+        <p class="details"><%= item.specifics %></p>
+        <% } %>
+        
+        <!-- META -->
+        <% if (item.dateDiagnosed || item.diagnosedBy) { %>
+        <p class="meta">
+            Diagnosed 
+            <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
+            <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
+        </p>
+        <% } %>
+    </div>
+</div>

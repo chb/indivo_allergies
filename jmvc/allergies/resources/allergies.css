@@ -9,10 +9,42 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #top_buttons { float: right; position: relative; margin: 0.75em 0; }
 #filter_buttons { float: right; width: 70%; line-height: 3.6em; }
 #filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
-#filter_buttons img { margin-right: 0.7em; vertical-align: -5%; }
+#filter_buttons img { margin-right: 0.55em; vertical-align: -5%; }
 #filter_buttons label { margin-right: 1.5em; }
 #allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
 
+
+/* allergy overview */
+.one_allergy {
+    position: relative; float: left; min-width: 300px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
+    border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.one_allergy:hover {
+    border-color: rgb(120,120,120);
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.one_allergy_active {
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.one_allergy_inner {
+    min-height: 145px;
+    padding: 15px 18px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
+    background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
+}
+
+.one_allergy h2 { display: inline; margin: 0; }
+.one_allergy h3 {
+    display: inline; margin: 0 0 0 1em;
+    font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
+}
+.one_allergy p { margin: 0.5em 0 0; }
+.one_allergy_inner .warnsign { margin: -17px -20px 0; }
+
+.one_allergy_editing .bottom_buttons { text-align: left; }
+.one_allergy_editing .bottom_buttons .bold { float: right; }
 
 /* detail view */
 #one_allergy { width: 520px; height: auto; top: 0px; right: 80px; text-align: left; }
@@ -53,36 +85,27 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
-#floating_close { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; }
-#start_editing { font-weight: bold; }
-#action_panel {
-    display: none; position: absolute; bottom: -8px; right: -8px; width: 48%; height: 64px;
-    padding: 8px; text-align: left;
-    border: 1px solid rgba(0,0,0,0.6); border-radius: 0.4em; box-shadow: 0 1px 0 rgba(255,255,255,0.8);
-    background: url("rubber_grip.png") top left repeat rgba(0,0,0,0.2);
-}
-#action_panel .bold { float: right; }
-#action_panel #cancel_editing { position: absolute; bottom: 8px; right: 8px; }
-#action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
-#action_area img { margin-right: 0.25em; vertical-align: -8%; }
+.close_button { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; }
+.action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
+.action_area img { margin-right: 0.25em; vertical-align: -8%; }
 
 /* confirmation dialog */
-#confirm {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+.confirm {
+    position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px;
     background: rgba(0,0,0,0.5); border-radius: inherit;
 }
-#confirm_box {
-    width: 50%; margin: 5% auto 0; padding: 8px; text-align: right; vertical-align: middle;
+.confirm_box {
+    width: 60%; margin: 5% auto 0; padding: 0.8em; text-align: right; vertical-align: middle;
     border: 1px solid rgb(80,80,80); border-radius: 0.4em; background-color: white; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(252,252,252)), to(rgb(235,235,235)));
     background-image:-moz-linear-gradient(top, rgb(252,252,252), rgb(235,235,235));
 }
-#confirm_box p { text-align: center; }
-#confirm_box input[type="text"] { width: 80%; }
-#confirm_box .bottom_buttons { padding-top: 0.5em; }
+.confirm_box p { margin-bottom: 1em; text-align: center; }
+.confirm_box input[type="text"] { width: 90%; }
+.confirm_box .bottom_buttons { padding-top: 0.5em; }
 
 /* generic */
-td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color: #464337; }
+.details { font-size: 1.1em; color: #464337; }
 .specifics { margin: 0.5em 0; padding: 0.5em 0; font-size: 0.9em; border-top: 1px dotted rgb(0,0,0); border-top-color: rgba(0,0,0,0.1); }
 .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
 .meta { position: relative; font-size: 0.8em; text-align: right; color: rgba(70,67,55,0.7); }
@@ -93,7 +116,9 @@ td.details { padding: 0.5em 2em; font-size: 1.1em; background-color: #fff; color
 .bigger { font-size: 1.15em; }
 .bold { font-weight: bold; }
 .red { color: #800; }
+.attention { margin: 3em 2em; }
 a.disabled:hover { border: none; cursor: default; }
+.action_spinner { margin:0 1em; vertical-align:-11%; }
 
 /* status */
 .warnsign {  }
