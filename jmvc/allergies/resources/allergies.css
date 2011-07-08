@@ -2,6 +2,7 @@ body { background: #FAFAFA; padding-bottom: 1.5em; } /* don't inherit background
 h2 { margin-bottom: 1em; }
 td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
+#allergy { position: relative; }
 #loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #loading.floating { float: right; width: 74%; margin: 0; text-align: left; }
 #loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
@@ -16,7 +17,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 /* allergy overview */
 .one_allergy {
-    position: relative; float: left; min-width: 300px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
+    position: relative; float: left; min-width: 200px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
     text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
@@ -46,42 +47,34 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .one_allergy_editing .bottom_buttons { text-align: left; }
 .one_allergy_editing .bottom_buttons .bold { float: right; }
 
-/* detail view */
-#one_allergy { width: 520px; height: auto; top: 0px; right: 80px; text-align: left; }
-#one_allergy h2 { float: left; margin: 0; }
-#one_allergy h3 {
-    margin: 0.1em 0 1em; text-align: right; line-height: 2.4; min-height: 5ex;
-    font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
-}
-#one_allergy p { color: black; }
-#one_allergy p.bigger { margin-bottom: 0.5em; }
 .bottom_buttons p.meta { float: left; max-width: 75%; margin: 0; text-align: left; color: rgba(70,67,55,0.7); }
 
 .warnsign {
     height: 1.9em; line-height: 2em; margin:-21px -26px 0; padding: 0 25px;
-    border: 1px solid rgb(120,120,120); border-radius: 0.4em 0.4em 0 0;
+    border: 1px solid rgb(120,120,120); border-radius: 6px 6px 0 0;
     color: white; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,0.8);
     background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
 }
 
 
 /* allergy form */
-#allergy_form { width: 520px; height: auto; top: 0px; right: 140px; text-align: left; }
+#form_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 2; }
+#allergy_form { position: relative; width: 520px; text-align: left; }
 #allergy_form textarea { padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
 #allergy_form .short { width: 30%; }
 #allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
-#allergy_form p { margin: 0; padding-top: 1em; clear: right; }
+#allergy_form p { margin: 0; padding-top: 1em; }
 
 
 /* floating window */
 .floating_window {
-    position: absolute; z-index: 2; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-    border: 1px solid rgb(160,160,160); border-radius: 0.4em; background:url("white_carbon.png") top left repeat rgb(245,245,245);
+    margin: 0 auto; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 .floating_window_gradient {
-    min-height: 160px; padding: 20px 25px; border-radius: 0.4em;
+    min-height: 160px; padding: 20px 25px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
@@ -119,6 +112,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .attention { margin: 3em 2em; }
 a.disabled:hover { border: none; cursor: default; }
 .action_spinner { margin:0 1em; vertical-align:-11%; }
+.clear { clear: both; }
 
 /* status */
 .warnsign {  }

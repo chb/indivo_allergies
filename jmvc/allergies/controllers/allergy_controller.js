@@ -142,7 +142,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    
 	    switch (action) {
 	        case 'edit':
-	            this.showFormFor(button, allergy);
+	            this.showFormFor(this.allergyParentFor(button), allergy);
 	            break;
 	        case 'archive':
 	            break;
@@ -189,10 +189,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	 * Allergy edit form
 	 */
 	'#add_allergy click': function(button) {
-	    if ($('#allergy_form').is('*')) {
-	        return;
-	    }
-	    this.showFormFor();
+	    this.showFormFor(button);
 	},
 	
 	'form submit': function(form, event) {
@@ -204,35 +201,18 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));	// "update" will call "create" if no id is given
 	},
 	
-	showFormFor: function(link, allergy) {
-	    if ($('#allergy_form').is('*')) {
+	showFormFor: function(button, allergy) {
+	    if ($('#form_container').is('*')) {
 	        return;
 	    }
 	    
-        var form = $(this.view('form', allergy));
-        
-	    // details pane is shown, just replace that
-	    if ($('#one_allergy').is('*')) {
-	        this.formHideWillShowDetails = true;
-	        var details = $('#one_allergy');
-	        form.css('right', details.css('right'));
-	        details.replaceWith(form);
-	        link = $('#allergy_list').find('a.active').first();
-	    }
-	    
 	    // show the form
-	    else {
-	        this.formHideWillShowDetails = false;
-	        if (link && link.attr('id') != "add_allergy") {
-    	        form.css('right', 80);
-    	    }
-            $('#add_allergy').before(form);
-            
-            this.floatingDivWillShow(link);
-		}
-		
+	    this.floatingDivWillShow();
+        var form = $(this.view('form', allergy));
+        $('#allergy').append($('<div/>', { id: 'form_container' }).append(form));
+        this.alignFloatingDivTo(form, button);
+        
 		form.find('input[name="allergen_name"]').focus();
-        this.alignFloatingDivTo(form, link);
 	},
 	
 	// handle form returns
@@ -264,33 +244,27 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	// ** Handling the floating div
 	floatingDivWillShow: function(from_link) {
-	    if (from_link) {
-    		from_link.removeClass('disabled').addClass('active');
-    	}
 		$('#add_allergy').attr('disabled', 'disabled');
 		$('#filter_buttons').find('input[type="checkbox"]').attr('disabled', 'disabled');
 	},
 	dismissFloatingDiv: function(button) {
-	    this.formHideWillShowDetails = false;
-	    var div = $('#one_allergy').is('*') ? $('#one_allergy') : $('#allergy_form');
-	    div.remove();
+	    $('#form_container').fadeOut('fast', function() { $('#form_container').remove(); });
 	    
 	    button.attr('disabled', 'disabled');
         $('#add_allergy').removeAttr('disabled');
         $('#filter_buttons').find('input[type="checkbox"]').removeAttr('disabled');
 	},
-	alignFloatingDivTo: function(div, to_link) {
-	    var ref_elem = div.parent().find('#add_allergy');
+	alignFloatingDivTo: function(div, to_elem) {
+	    if (!div) {
+            return;
+        }
 	    
-	    // try to align the midline of the link with the midlines of the view's close button
-		var desired_offset = to_link ? (to_link.offset().top + (to_link.height() / 2) - ref_elem.offset().top) : 0;        // link's midline offset relative to ref_elem
-		var div_buttons = div.find('.bottom_buttons');
-		var div_button = div_buttons.find('input[type="submit"]').first();
-		var button_offset = div_buttons.position().top + div_button.position().top + (div_button.height() / 1.5);
-		var min = 0;
-		var max = Math.max($('#allergy_list').position().top + $('#allergy_list').outerHeight() - div.outerHeight() - min, min);
+	    // try to align the top
+		var desired_offset = to_elem ? to_elem.offset().top - 20 : 0;
+		var min = 28;
+		var max = div.parent().outerHeight() - div.outerHeight() - min;
 		
-		div.css('top', Math.round(Math.min(Math.max(desired_offset - button_offset, min), max)));
+		div.css('margin-top', Math.round(Math.max(Math.min(desired_offset, max), min)));
 	},
 	
 	'.close_button mouseover': function(elem) {
@@ -300,21 +274,6 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    $(elem).attr('src', "jmvc/allergies/resources/close.png");
 	},
 	'.dismiss_floating click': function(sender) {
-	    if (this.formHideWillShowDetails) {
-	        this.formHideWillShowDetails = false;
-	        var allergy = sender.model();
-	        
-	        // we don't want to dismiss, we want to go back to the details view
-	        if (allergy) {
-    	        var details = $(this.view('details', allergy));
-    	        var form = $('#allergy_form');
-                details.css('right', form.css('right'));
-                form.replaceWith(details);
-                var link = $('#allergy_list').find('a.active').first();
-                this.alignFloatingDivTo(details, link);
-                return;
-	        }
-	    }
 	    this.dismissFloatingDiv(sender);
 	},
 	
@@ -377,6 +336,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	 * Utilities
 	 */
 	allergyParentFor: function(elem) {
+	    if (!elem) {
+	        return null;
+	    }
 	    return elem.parentsUntil('div.one_allergy').last().parent();
 	},
 	

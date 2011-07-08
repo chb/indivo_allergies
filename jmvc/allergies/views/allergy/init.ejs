@@ -30,9 +30,10 @@ if (reports && reports.length > 0) {
     _(reports_sorted.reverse()).each(function(report) {
 %>
     <%= view('./views/allergy/list', report) %>
-<% })
-}
+<% }) %>
+    <div class="clear"> </div>
+<% }
 else { %>
-    <h3 class="attention">No reports</h3>
+    <h3 class="attention">No reported allergies</h3>
 <% } %>
 </div>
