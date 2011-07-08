@@ -109,7 +109,8 @@ def new_allergy(request):
         return HttpResponse('error')
     
     # parse the date (TODO: Really parse human input)
-    date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.datetime.now().strftime('%Y-%m-%d')
+    from datetime import datetime
+    date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.now().strftime('%Y-%m-%d')
     
     # get the variables and create an XML
     params = {  'code_abbrev':      '',
@@ -144,13 +145,30 @@ def one_allergy(request):
 
 def allergy_history(request, allergy_id):
     """
-    Fetches allergy document versions and document status history from Indivo server
+    Fetches allergy document versions and document status history and
+    sorts them by createdAt
     """
     
-    # client.read_document_status_history(self, app_info,record_id='', document_id='',  data=None, debug=False)
-    #client.read_document_versions(self, app_info,record_id='', document_id='', parameters='',  data=None, debug=False)
-    return HttpResponse('["test"]', mimetype='text/plain')
-    #return HttpResonse(simplejson.dumps(reports))
+    client = get_indivo_client(request)
+    record_id = request.session['record_id']
+    
+    # 1: fetch history
+    xml = client.read_document_status_history(record_id = record_id, document_id = allergy_id).response['response_data']
+    history_etree = parse_xml(xml)
+    history = _parse_status(history_etree.findall('DocumentStatus'))
+    
+    # 2: fetch versions
+    xml = client.read_document_versions(record_id = record_id, document_id = allergy_id).response['response_data']
+    version_etree = parse_xml(xml)
+    versions = []
+    for v in version_etree.findall('Document'):
+        versions.append(_parse_meta(v))
+    
+    # mix and sort
+    history.extend(versions)
+    history.sort(key=lambda x: datetime.datetime.strptime(x['createdAt'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
+    
+    return HttpResponse(simplejson.dumps(history), mimetype='text/plain')
 
 
 def set_allergy_status(request, allergy_id):
@@ -158,8 +176,8 @@ def set_allergy_status(request, allergy_id):
     if 'POST' != request.method:
         ret = { 'status': 'error', 'data': 'method not allowed' }
     else:
-        record_id = request.session['record_id']
         client = get_indivo_client(request)
+        record_id = request.session['record_id']
         data = { 'status': request.POST.get('status', ''), 'reason': request.POST.get('reason', '') }
         res = client.set_document_status(record_id = record_id, document_id = allergy_id,  data = data)
         
@@ -187,13 +205,12 @@ def allergies(request):
     """
     Returns a list of allergies for the given record
     """
-    from datetime import datetime
     
     # process request attributes
     limit = int(request.GET.get('limit', 100)) # defaults
     offset = int(request.GET.get('offset', 0))
     status = request.GET.get('status', 'active')
-    stat_arr = status.split('|')
+    stat_arr = status.split('+')
     if len(stat_arr) < 1:
         stat_arr = [ 'active' ]
     client = get_indivo_client(request)
@@ -216,8 +233,6 @@ def allergies(request):
         num_docs += int(reports_et_list[0].attrib['total_document_count'])
         # don't bother about limit, offset, order_by and consort for now...
         
-        # note: we depend on the reports being ordered by date_measured
-        # it's ascending by default, hence the reverse()
         reports_for_parsing = list(reports_et.findall('Report'))
         all_reports.extend(reports_for_parsing)
     
@@ -267,10 +282,13 @@ def _parse_report(report):
 
 
 def _parse_meta(tree):
+    """
+    parses one node of "Document" (metadata) type
+    """
     if tree is None:
         return None
     
-    result = {'id': tree.attrib['id']}
+    result = { 'id': tree.attrib['id'], 'type': 'meta' }
     for node in tree:
         if 'creator' == node.tag:
             creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
@@ -307,4 +325,33 @@ def _parse_allergy(tree):
                 result.update({'specifics': e.text.strip() if e.text is not None else '' })
     
     return result
+
+
+def _parse_status(node_arr):
+    """
+    parses an array of DocumentStatus elements into status objects
+    """
+    if node_arr is None:
+        return None
+    
+    # loop nodes
+    entries = []
+    for node in node_arr:
+        if 'DocumentStatus' == node.tag:
+            entry = {
+                'type': 'status-history',
+                'creator': { 'id': node.attrib['by'], 'name': '' },
+                #'date': node.attrib['at'],
+                # the 'at' timestamp is not ISO 8601 formatted, so in our server we added another field 'createdAt' which is correctly formatted:
+                'createdAt': node.attrib['createdAt'],
+                'status': node.attrib['status']
+            }
+            
+            for subnode in node:
+                if 'reason' == subnode.tag:
+                    entry['reason'] = subnode.text.strip() if subnode.text else ''
+            
+            entries.append(entry)
+    
+    return entries
 

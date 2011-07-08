@@ -1,0 +1,16 @@
+<div class="one_history">
+    <img src="jmvc/allergies/resources/<%= type %>.png" alt="<%= type %>" />
+    
+    <% if ("status-history" == type) {
+        var stat_class = ("active" == status) ? "green" : "red"; %>
+    Status ➔ <b class="<%= stat_class %>"><%= status %></b><% if (reason) { %>&nbsp;&nbsp;(<%= reason %>)<% } %>
+    <% } else {
+        var doc_status = (id == original) ? "created" : "updated"; %>
+    Document <b><%= doc_status %></b>
+    <% } %>
+    
+    <div class="small">
+        <% if (creator.name) { %><%= creator.name %><% } else { %><%= creator.id %><% } %><br />
+        <%= createdAt %>
+    </div>
+</div>

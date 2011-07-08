@@ -21,7 +21,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	load: function() {
-		Allergies.Models.Allergy.findAll({ 'status': this.statusToGet.join('|') }, this.callback('list'));
+		Allergies.Models.Allergy.findAll({ 'status': this.statusToGet.join('+') }, this.callback('list'));
 	},
 	
 	list: function(allergies) {
@@ -111,7 +111,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    div.append($('<div/>', { className: 'one_allergy_inner one_allergy_editing' }).html(details));
 	    
 		// load history
-		allergy.loadHistory(this.callback('showHistory'));
+		allergy.loadHistory(this.callback('didLoadHistory', div));
 	},
 	'.one_allergy .close_button click': function(close, event) {
 	    event.stopPropagation();
@@ -123,8 +123,18 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    div.find('div.one_allergy_inner').show();
 	},
 	
-	showHistory: function(data, textStatus, xhr) {
-	    //alert('History: ' + data);
+	didLoadHistory: function(div, data, textStatus, xhr) {
+	    if ('success' == textStatus) {
+	        if (data.length > 0) {
+	            var parent = div.find('div.history');
+	            //var hist_row = this.view('history');
+	            for (var i = 0; i < data.length; i++) {
+	                //parent.append(hist_row.render(data[i]));      // is something like this possible with JMVC?
+                    parent.append(this.view('history', data[i]));
+	            }
+	        }
+	    }
+	    div.find('div.history_spinner').hide();
 	},
 	
 	
@@ -160,9 +170,10 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	 * Voiding
 	 */
 	askToVoid: function(sender, allergy) {
-	    var warning = "Reason to void this allergy?";
+	    var warning = ('void' == allergy.meta.status) ? "Reason for unvoiding this allergy?" : "Reason to void this allergy?";
+	    var button_title = ('void' == allergy.meta.status) ? "Unvoid" : "Void";
 	    var div = this.allergyParentFor(sender);
-	    this.askForConfirmation(div, allergy, warning, true, "Void", this.callback('voidAllergy'));
+	    this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('voidAllergy'));
 	},
 	voidAllergy: function(sender, allergy, reason) {
 	   if (!allergy || !reason) {
@@ -170,7 +181,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
     	}
     	else {
     	    this.indicateActionOn(sender);
-            allergy.setStatus('void', reason, this.callback('didVoidAllergy', sender));
+    	    var void_status = ('void' == allergy.meta.status) ? 'active' : 'void';
+            allergy.setStatus(void_status, reason, this.callback('didVoidAllergy', sender));
     	}
 	},
 	didVoidAllergy: function(sender, data, textStatus) {
