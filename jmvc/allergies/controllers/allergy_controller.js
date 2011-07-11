@@ -154,10 +154,21 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	        case 'edit':
 	            this.showFormFor(this.allergyParentFor(button), allergy);
 	            break;
+	            
 	        case 'archive':
+	            var new_status = ('archived' == allergy.meta.status) ? 'active' : 'archived';
+	            var warning = ('archived' == new_status) ? "Reason for archiving this allergy?" : "Reason for re-activating this allergy?";
+                var button_title = ('archived' == new_status) ? "Archive" : "Unarchive";
+                var div = this.allergyParentFor(button);
+                this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', button, new_status));
 	            break;
+	            
 	        case 'void':
-	            this.askToVoid(button, allergy);
+	            var new_status = ('void' == allergy.meta.status) ? 'active' : 'void';
+	            var warning = ('void' == new_status) ? "Reason for voiding this allergy?" : "Reason for unvoiding this allergy?";
+                var button_title = ('void' == new_status) ? "Void" : "Unvoid";
+                var div = this.allergyParentFor(button);
+                this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', button, new_status));
 	            break;
 	        default:
 	            alert("Unknown actionButtonAction '" + action + '"');
@@ -167,31 +178,24 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	
 	/**
-	 * Voiding
+	 * Changing status
 	 */
-	askToVoid: function(sender, allergy) {
-	    var warning = ('void' == allergy.meta.status) ? "Reason for unvoiding this allergy?" : "Reason to void this allergy?";
-	    var button_title = ('void' == allergy.meta.status) ? "Unvoid" : "Void";
-	    var div = this.allergyParentFor(sender);
-	    this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('voidAllergy'));
-	},
-	voidAllergy: function(sender, allergy, reason) {
-	   if (!allergy || !reason) {
-	        alert("You must specify a reason when voiding");
+	setStatus: function(sender, new_status, allergy, reason) {
+	    if (!allergy || !reason) {
+	        alert("You must specify a reason when changing the status");
     	}
     	else {
     	    this.indicateActionOn(sender);
-    	    var void_status = ('void' == allergy.meta.status) ? 'active' : 'void';
-            allergy.setStatus(void_status, reason, this.callback('didVoidAllergy', sender));
+            allergy.setStatus(new_status, reason, this.callback('didSetStatus', sender));
     	}
 	},
-	didVoidAllergy: function(sender, data, textStatus) {
+	didSetStatus: function(sender, data, textStatus) {
 	    if ('success' == textStatus) {
 	        var parent = this.allergyParentFor(sender);
 	        this.update(parent, data);
 	    }
 	    else {
-    	    alert('Failed to void the allergy: ' + data);
+    	    alert('Failed to change status: ' + data);
     	    this.actionIsDone(sender);
     	}
 	},
@@ -316,7 +320,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	            var sender = $(this);
 	            var model = self.allergyParentFor($(this)).model();
 	            var input = sender.parent().parent().find('.confirm_input').val();
-	            confirm_action(sender, model, input);
+	            confirm_action(model, input);
 	        });
 	    }
 	    else if (!parent) {

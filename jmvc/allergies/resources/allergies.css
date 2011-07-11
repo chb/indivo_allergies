@@ -24,7 +24,6 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 }
 .one_allergy:hover {
     border-color: rgb(120,120,120);
-    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .one_allergy_active {
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);

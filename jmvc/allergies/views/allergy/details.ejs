@@ -34,7 +34,7 @@
         <img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="" />
         <span id="action_text">funny</span>
     </div>
-    <input class="action_button" type="button" value="<%= archive_title %>" <% if ("active" != meta.status) { %>disabled="disabled"<% } %> data="archive" <%= this %> />
+    <input class="action_button" type="button" value="<%= archive_title %>" <% if ("void" == meta.status) { %>disabled="disabled"<% } %> data="archive" <%= this %> />
     <input class="action_button red" type="button" value="<%= void_title %>" <% if ("archived" == meta.status) { %>disabled="disabled"<% } %> data="void" <%= this %> />
     <input class="action_button bold" type="button" value="Edit" <% if ("active" != meta.status) { %>disabled="disabled"<% } %> data="edit" <%= this %> />
 </div>
