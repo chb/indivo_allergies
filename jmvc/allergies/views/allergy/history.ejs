@@ -1,5 +1,6 @@
-<div class="one_history">
-    <img src="jmvc/allergies/resources/<%= type %>.png" alt="<%= type %>" />
+<div class="one_history<% if ('meta' == type && id != latest) { %> history_meta" data-id="<%= id %>"<% } %>" data-type="<%= type %>">
+    <% var img_name = ("meta" == type) ? (id == latest ? "version-latest" : "version") : type; %>
+    <img src="jmvc/allergies/resources/<%= img_name %>.png" alt="<%= img_name %>" />
     
     <% if ("status-history" == type) {
         var stat_class = ("active" == status) ? "green" : "red"; %>

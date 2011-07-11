@@ -151,9 +151,21 @@ def replace_allergy(request, allergy_id):
     return HttpResponse(status)
 
 
-def one_allergy(request):
-    return HttpResponse('["not implemented"]')
-    #return HttpResonse(simplejson.dumps(reports))
+def one_allergy(request, allergy_id):
+    """
+    Return one allergy by document id
+    This does not retrieve meta data
+    """
+    
+    client = get_indivo_client(request)
+    record_id = None
+    if request.session.has_key('record_id'):
+        record_id = request.session['record_id']
+    
+    xml = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
+    allergy = _parse_allergy(parse_xml(xml))
+    
+    return HttpResponse(simplejson.dumps({ 'status': 'success', 'data': allergy }), mimetype='text/plain')
 
 
 def allergy_history(request, allergy_id):
@@ -312,6 +324,8 @@ def _parse_meta(tree):
             result.update({'original': node.attrib['id']})
         elif 'latest' == node.tag:
             result.update({'latest': node.attrib['id']})
+        elif 'replaces' == node.tag:
+            result.update({'replaces': node.attrib['id']})
         else:
             result.update({node.tag: node.text.strip() if node.text else ''})
     
@@ -355,9 +369,7 @@ def _parse_status(node_arr):
             entry = {
                 'type': 'status-history',
                 'creator': { 'id': node.attrib['by'], 'name': '' },
-                #'date': node.attrib['at'],
-                # the 'at' timestamp is not ISO 8601 formatted, so in our server we added another field 'createdAt' which is correctly formatted:
-                'createdAt': node.attrib['createdAt'],
+                'createdAt': node.attrib['at'],
                 'status': node.attrib['status']
             }
             

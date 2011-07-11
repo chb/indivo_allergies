@@ -135,6 +135,37 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    div.find('div.history_spinner').hide();
 	},
 	
+	'.one_history click': function(div) {
+	    var type = div.attr('data-type');       // div.data('type') in later jQuery versions
+	    if ('meta' == type) {
+	        var id = div.attr('data-id');
+	        if (id) {
+	            if ($('#one_hist_' + id).is('*')) {
+	                $('#one_hist_' + id).remove();
+	                div.removeClass('active_history');
+	            }
+	            else {
+    	            Allergies.Models.Allergy.findOne({ 'id': id }, this.callback('didLoadOneHistory', div, id));
+    	        }
+	        }
+    	}
+	},
+	didLoadOneHistory: function(div, id, entry) {
+	    if (entry) {
+	        var node_id = 'one_hist_' + id;
+	        if ($('#' + node_id).is('*')) {
+	            $('#' + node_id).remove();
+	            div.removeClass('active_history');
+	        }
+	        else {
+    	        div.addClass('active_history');
+    	        var data = { meta: { status: 'replaced' }, item: entry };
+    	        var hist = $($(this.view('list', data)).html()).attr('id', node_id);
+    	        div.after(hist);
+    	    }
+    	}
+	},
+	
 	
 	/**
 	 * Actions

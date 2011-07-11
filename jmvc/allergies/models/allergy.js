@@ -23,6 +23,22 @@ $.Model.extend('Allergies.Models.Allergy',
         });
     },
     
+    findOne : function(params, success, error){
+        var self = this,
+        id = params.id;
+        delete params.id;
+        $.ajax({
+            url: '/apps/allergies/allergies/' + id,
+            type: 'get',
+            dataType: 'json',
+            data: params,
+            success: this.callback(function(data, textStatus, xhr) {
+                success(self.wrap(data.data));               // wrap is deprecated!
+            }),
+            error: error
+        });
+    },
+    
     
     /**
      * Create or update an allergy

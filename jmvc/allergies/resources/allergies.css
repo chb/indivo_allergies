@@ -17,7 +17,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 /* allergy overview */
 .one_allergy {
-    position: relative; float: left; min-width: 200px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
+    position: relative; float: left; min-width: 280px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
     text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
@@ -26,18 +26,19 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     border-color: rgb(120,120,120);
 }
 .one_allergy_active {
+    border-color: rgb(120,120,120); cursor: default;
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .one_allergy_inner {
     min-height: 145px;
     padding: 15px 18px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
-    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 
-.one_allergy h2 { display: inline; margin: 0; }
+.one_allergy h2 { display: inline; margin: 0; font-size: 1.6em; }
 .one_allergy h3 {
-    display: inline; margin: 0 0 0 1em;
+    display: inline; margin: 0 0 0 1em; font-size: 1.3em;
     font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
 }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
@@ -56,10 +57,23 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 /* allergy history */
 .history { margin-top: 1em; font-size: 0.9em; }
-.one_history { margin: 0.75em 0 0; padding-top: 0.5em; border-top: 1px dotted rgb(160,160,160); }
+.one_history { padding: 0.5em 0 0.75em; border: 1px dotted transparent; border-top-color: rgb(160,160,160); }
+.history_meta { cursor: pointer; }
+.active_history {
+    background: rgba(0,0,0,0.1); border-radius: 6px 6px 0 0;
+    border-top: 1px solid rgba(0,0,0,0.3); border-left: 1px solid rgba(0,0,0,0.2); border-right: 1px solid rgba(0,0,0,0.2);
+}
 .one_history img { float: left; margin: 0 0.75em 1em 0; }
 .history_spinner img { margin-right: 0.75em; vertical-align: -10%; }
 
+.history .one_allergy_inner {
+    margin: 0 0 1.5em; padding: 10px; cursor: default; font-size: 0.9em; background: rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.15); border-top: none; border-radius: 0 0 6px 6px;
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.95); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.95); box-shadow: 0 1px 0 rgba(255,255,255,0.95);
+}
+.history .warnsign { margin: 0 -11px 0.5em; padding: 0 10px; font-size: 1.15em; border-radius: 0; }
+.history h2 { font-size: 1.9em; }
+.history h3 { font-size: 1.4em; }
 
 
 /* allergy form */
@@ -80,7 +94,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 }
 .floating_window_gradient {
     min-height: 160px; padding: 20px 25px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
-    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0)), to(rgba(255,255,255,0.9)));
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 .close_button { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; }
