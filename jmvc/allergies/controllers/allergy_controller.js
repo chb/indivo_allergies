@@ -135,7 +135,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    div.find('div.history_spinner').hide();
 	},
 	
-	'.one_history click': function(div) {
+	'.history_meta click': function(div) {
 	    var type = div.attr('data-type');       // div.data('type') in later jQuery versions
 	    if ('meta' == type) {
 	        var id = div.attr('data-id');
@@ -145,6 +145,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	                div.removeClass('active_history');
 	            }
 	            else {
+	                var img = div.find('img.history_type').first();
+	                img.attr('data-src', img.attr('src')).attr('src', 'jmvc/allergies/resources/spinner-small.gif');
     	            Allergies.Models.Allergy.findOne({ 'id': id }, this.callback('didLoadOneHistory', div, id));
     	        }
 	        }
@@ -159,11 +161,26 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	        }
 	        else {
     	        div.addClass('active_history');
+    	        var img = div.find('img.history_type').first();
+    	        img.attr('src', img.attr('data-src'));
+    	        
+    	        // load data
     	        var data = { meta: { status: 'replaced' }, item: entry };
     	        var hist = $($(this.view('list', data)).html()).attr('id', node_id);
     	        div.after(hist);
+    	        
+    	        // add a restore button
+    	        var replace = $('<input/>', { type: 'button', className: 'small' }).val('Restore').click(this.callback('restoreHistory', id));
+    	        hist.find('.status_replaced').first().append(replace);
     	    }
     	}
+	},
+	
+	restoreHistory: function(id, ev) {
+	    if (confirm("Sure?")) {
+    	    $(ev.currentTarget).replaceWith('<img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="Restoring..." />');
+	        alert('Restore: ' + id + "\n\nNot yet implemented");
+	    }
 	},
 	
 	
