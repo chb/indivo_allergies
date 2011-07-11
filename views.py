@@ -108,25 +108,38 @@ def new_allergy(request):
     if 'POST' != request.method:
         return HttpResponse('error')
     
-    # parse the date (TODO: Really parse human input)
-    from datetime import datetime
-    date_diag = request.POST['date_onset'] if request.POST.get('date_onset', '') != '' else datetime.now().strftime('%Y-%m-%d')
-    
-    # get the variables and create an XML
-    params = {  'code_abbrev':      '',
-                'coding_system':    'snomed',
-                'date_diagnosed':   date_diag,
-                'allergen_type':    request.POST.get('allergen_type', 'unknown'),
-                'allergen_name':    request.POST.get('allergen_name', ''),
-                'reaction':         request.POST.get('reaction', 'unknown'),
-                'specifics':        request.POST.get('specifics', ''),
-                'diagnosed_by' :    request.POST.get('diagnosed_by', '')
-            }
+    # parse the data
+    params = _allergy_params_from_post(request.POST)
     new_xml = render_raw('allergy', params, type='xml')
     
     # add the allergy
     client = get_indivo_client(request)
-    res = client.post_document(record_id = request.session['record_id'], data=new_xml, debug=True)
+    res = client.post_document(record_id = request.session['record_id'], data=new_xml)
+    
+    # we always return a 200 HttpResponse, let's deal with errors in the controller
+    status = res.response['response_status']
+    if 200 == int(status):
+        status = 'success'
+    else:
+        status = res.response['response_data'] if res.response['response_data'] else status
+    
+    return HttpResponse(status)
+
+
+def replace_allergy(request, allergy_id):
+    """
+    Creates an allergy XML from POSTed values and submits it as replacement of an existing document
+    """
+    if 'POST' != request.method:
+        return HttpResponse('error')
+    
+    # parse the data
+    params = _allergy_params_from_post(request.POST)
+    new_xml = render_raw('allergy', params, type='xml')
+    
+    # add the allergy
+    client = get_indivo_client(request)
+    res = client.replace_document(record_id = request.session['record_id'], document_id = allergy_id, data=new_xml)
     
     # we always return a 200 HttpResponse, let's deal with errors in the controller
     status = res.response['response_status']
@@ -227,7 +240,6 @@ def allergies(request):
     all_reports = []
     for stat in stat_arr:
         xml = client.read_allergies(record_id = record_id, parameters = { 'status': stat }).response['response_data']
-        
         reports_et = parse_xml(xml)
         reports_et_list = list(reports_et)
         num_docs += int(reports_et_list[0].attrib['total_document_count'])
@@ -323,6 +335,8 @@ def _parse_allergy(tree):
                 result.update({'reaction': e.text.strip() if e.text is not None else '' })
             elif e.tag == NS+'specifics':
                 result.update({'specifics': e.text.strip() if e.text is not None else '' })
+            elif e.tag == NS+'diagnosedBy':
+                result.update({'diagnosedBy': e.text.strip() if e.text is not None else '' })
     
     return result
 
@@ -355,3 +369,25 @@ def _parse_status(node_arr):
     
     return entries
 
+
+def _allergy_params_from_post(post):
+    
+    # parse the date (TODO: Really parse human input)
+    from datetime import datetime
+    date_diag = post['date_onset'] if post.get('date_onset', '') != '' else datetime.now().strftime('%Y-%m-%d')
+    
+    # get the variables and create an XML
+    params = {  'code_abbrev':      '',
+                'coding_system':    'snomed',
+                'date_diagnosed':   date_diag,
+                'allergen_type':    post.get('allergen_type', 'unknown'),
+                'allergen_name':    post.get('allergen_name', ''),
+                'reaction':         post.get('reaction', 'unknown'),
+                'specifics':        post.get('specifics', ''),
+                'diagnosed_by' :    post.get('diagnosed_by', '')
+            }
+    
+    return params
+
+    
+    

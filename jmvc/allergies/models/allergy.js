@@ -47,7 +47,18 @@ $.Model.extend('Allergies.Models.Allergy',
             return this.create(params, success, error);
         }
         
-        // ...
+        $.ajax({
+            url: '/apps/allergies/allergies/' + id + '/replace',
+            type: 'post',
+            dataType: 'text',
+            data: params,
+            success: this.callback(function(data, textStatus, xhr) {
+                if (success) {
+                    success(data, textStatus);
+                }
+            }),
+            error: error
+        });
     },
 },
 /* @Prototype */

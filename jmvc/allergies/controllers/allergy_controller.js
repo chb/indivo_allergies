@@ -87,7 +87,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	
 	/**
-	 * Show details
+	 * Show details/history
 	 */
 	'.one_allergy click': function(div) {
         this.showDetailsFor(div);
@@ -127,9 +127,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    if ('success' == textStatus) {
 	        if (data.length > 0) {
 	            var parent = div.find('div.history');
-	            //var hist_row = this.view('history');
 	            for (var i = 0; i < data.length; i++) {
-	                //parent.append(hist_row.render(data[i]));      // is something like this possible with JMVC?
                     parent.append(this.view('history', data[i]));
 	            }
 	        }

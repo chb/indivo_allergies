@@ -7,7 +7,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #loading.floating { float: right; width: 74%; margin: 0; text-align: left; }
 #loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
 
-#top_buttons { float: right; position: relative; margin: 0.75em 0; }
+#top_buttons { float: right; position: relative; margin: 0.75em 1em; }
 #filter_buttons { float: right; width: 70%; line-height: 3.6em; }
 #filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
 #filter_buttons img { margin-right: 0.55em; vertical-align: -5%; }
@@ -65,7 +65,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 /* allergy form */
 #form_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 2; }
 #allergy_form { position: relative; width: 520px; text-align: left; }
-#allergy_form textarea { padding: 2px; }
+#allergy_form textarea { height: 8.5em; padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
 #allergy_form .short { width: 30%; }
 #allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }

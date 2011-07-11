@@ -3,7 +3,7 @@
     <div class="floating_window_gradient">
         <img class="close_button dismiss_floating" src="jmvc/allergies/resources/close.png" alt="x" />
         
-        <% if (!this.item) { item = {}; } %>
+        <% if (!this.item) { item = {}; meta = {}; } %>
         
         <p class="bigger">Allergen<input class="full" type="text" name="allergen_name" value="<%= item.name %>" /></p>
         <p>Type<input class="full" type="text" name="allergen_type" value="<%= item.type %>" /></p>
@@ -20,7 +20,7 @@
         <div class="bottom_buttons">
             <input class="dismiss_floating" type="reset" value="Cancel" <%= this %> />
             <input type="submit" value="<% if (this) { %>Save<% } else { %>Report<% } %>" />
-            <input type="hidden" name="id" value="" />
+            <input type="hidden" name="id" value="<% if (meta.id) { %><%= meta.id %><% } %>" />
         </div>
     </div>
 </form>
