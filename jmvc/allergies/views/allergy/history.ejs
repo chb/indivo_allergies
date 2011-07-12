@@ -1,6 +1,7 @@
 <div class="one_history<% if ('meta' == type && id != latest) { %> history_meta" data-id="<%= id %>"<% } %>" data-type="<%= type %>">
-    <% var img_name = ("meta" == type) ? (id == original ? "version-first" : "version") : type; %>
-    <img class="history_type" src="jmvc/allergies/resources/<%= img_name %>.png" alt="<%= img_name %>" />
+    <% var img_name = ("meta" == type) ? (id == original ? "version-first" : ((id == latest) ? "version-latest" : "version")) : type;
+    var img_title = ("meta" == type) ? (id == original ? "Document created" : ((id == latest) ? "Current version" : "Older version")) : type; %>
+    <img class="history_type" src="jmvc/allergies/resources/<%= img_name %>.png" alt="<%= img_name %>" title="<%= img_title %>" />
     
     <% if ("status-history" == type) {
         var stat_class = ("active" == status) ? "green" : "red"; %>

@@ -180,24 +180,26 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	// restoring is submitting item data of a history item as a new replacement document
 	restoreFrom: function(allergy, ev) {
-		if (allergy && confirm("Are you sure you wish to restore this version?")) {
-			var button = $(ev.currentTarget);
-			var sender = button.parent();
-			button.replaceWith('<img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="Restoring..." />');
-			
-			// create the post values and submit as new document
-			var data = {
-				date_onset:		allergy.item.dateDiagnosed,
-				allergen_type:	allergy.item.type,
-				allergen_name:	allergy.item.name,
-				reaction:		allergy.item.reaction,
-				specifics:		allergy.item.specifics,
-				diagnosed_by:	allergy.item.diagnosedBy
-			}
-			Allergies.Models.Allergy.update(allergy.meta.latest, data, this.callback('didRestoreFrom', sender));
-		}
-		else {
-			alert("restoreFrom()\n\nProgramming-Error: The allergy item could not be accessed");
+	    if (confirm("Are you sure you wish to restore this version?")) {
+            if (allergy) {
+                var button = $(ev.currentTarget);
+                var sender = button.parent();
+                button.replaceWith('<img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="Restoring..." />');
+                
+                // create the post values and submit as new document
+                var data = {
+                    date_onset:		allergy.item.dateDiagnosed,
+                    allergen_type:	allergy.item.type,
+                    allergen_name:	allergy.item.name,
+                    reaction:		allergy.item.reaction,
+                    specifics:		allergy.item.specifics,
+                    diagnosed_by:	allergy.item.diagnosedBy
+                }
+                Allergies.Models.Allergy.update(allergy.meta.latest, data, this.callback('didRestoreFrom', sender));
+            }
+            else {
+                alert("restoreFrom()\n\nProgramming-Error: The allergy item could not be accessed");
+            }
 		}
 	},
 	didRestoreFrom: function(sender, data, status) {
