@@ -114,16 +114,12 @@ def new_allergy(request):
     
     # add the allergy
     client = get_indivo_client(request)
-    res = client.post_document(record_id = request.session['record_id'], data=new_xml)
+    res = client.post_document(record_id = request.session['record_id'], data = new_xml)
     
     # we always return a 200 HttpResponse, let's deal with errors in the controller
     status = res.response['response_status']
-    if 200 == int(status):
-        status = 'success'
-    else:
-        status = res.response['response_data'] if res.response['response_data'] else status
-    
-    return HttpResponse(status)
+    data = res.response['response_data']
+    return HttpResponse(simplejson.dumps({ 'status': status, 'data': data }))
 
 
 def replace_allergy(request, allergy_id):
@@ -134,21 +130,27 @@ def replace_allergy(request, allergy_id):
         return HttpResponse('error')
     
     # parse the data
+    record_id = request.session['record_id']
     params = _allergy_params_from_post(request.POST)
     new_xml = render_raw('allergy', params, type='xml')
     
-    # add the allergy
+    # replacet the allergy and retrieve the newly created document
     client = get_indivo_client(request)
-    res = client.replace_document(record_id = request.session['record_id'], document_id = allergy_id, data=new_xml)
+    res = client.replace_document(record_id = record_id, document_id = allergy_id, data = new_xml)
+    
+    status = res.response['response_status']
+    meta_xml = res.response['response_data'] if res.response['response_data'] is not '' else None
+    allergy = None
+    if meta_xml:
+        meta = _parse_meta(parse_xml(meta_xml))
+        if meta['id']:
+            doc_xml = client.read_document(record_id = record_id, document_id = meta['id']).response['response_data']
+            allergy = _parse_report(parse_xml(doc_xml))             # don't just use _parse_allergy() here because we want the complete allergy json tree
+            if allergy:
+                allergy['meta'] = meta
     
     # we always return a 200 HttpResponse, let's deal with errors in the controller
-    status = res.response['response_status']
-    if 200 == int(status):
-        status = 'success'
-    else:
-        status = res.response['response_data'] if res.response['response_data'] else status
-    
-    return HttpResponse(status)
+    return HttpResponse(simplejson.dumps({ 'status': status, 'data': allergy }))
 
 
 def one_allergy(request, allergy_id):
@@ -291,6 +293,9 @@ def allergies(request):
 
 # Only used by class instances
 def _parse_report(report):
+    """
+    Parses a complete allergy document, both metadata in <Document> and item data in <Allergy> nodes
+    """
     meta = report.find('Meta')
     meta = meta[0] if meta is not None and len(meta) > 0 else None
     allergy = report.find('Item')
@@ -307,12 +312,12 @@ def _parse_report(report):
 
 def _parse_meta(tree):
     """
-    parses one node of "Document" (metadata) type
+    Parses one node of <Document> (metadata) type
     """
     if tree is None:
         return None
     
-    result = { 'id': tree.attrib['id'], 'type': 'meta' }
+    result = { 'id': tree.attrib.get('id', 0), 'type': 'meta' }
     for node in tree:
         if 'creator' == node.tag:
             creator = {'id': node.attrib['id'], 'name': node.find('fullname').text.strip()}
@@ -330,9 +335,12 @@ def _parse_meta(tree):
             result.update({node.tag: node.text.strip() if node.text else ''})
     
     return result
-            
+
 
 def _parse_allergy(tree):
+    """
+    Parses one node of <Allergy> (document data) type
+    """
     result = {}
     
     if tree is not None and len(tree) > 0:
@@ -357,7 +365,7 @@ def _parse_allergy(tree):
 
 def _parse_status(node_arr):
     """
-    parses an array of DocumentStatus elements into status objects
+    Parses an array of DocumentStatus elements into status objects
     """
     if node_arr is None:
         return None

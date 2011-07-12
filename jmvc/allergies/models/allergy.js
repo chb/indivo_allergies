@@ -1,6 +1,6 @@
 /**
  * @tag models, home
- * Wraps backend data services. No UD for now
+ * Wraps backend data services
  */
 $.Model.extend('Allergies.Models.Allergy',
 /* @Static */
@@ -17,13 +17,13 @@ $.Model.extend('Allergies.Models.Allergy',
             dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
-                success(self.wrapMany(data));               // wrapMany is deprecated!
+                success(self.wrapMany(data));               // wrapMany is deprecated (but models() doesn't want to play with me...)!
             }),
             error: error
         });
     },
     
-    findOne : function(params, success, error){
+    findOne: function(params, success, error) {
         var self = this,
         id = params.id;
         delete params.id;
@@ -47,7 +47,7 @@ $.Model.extend('Allergies.Models.Allergy',
         $.ajax({
             url: '/apps/allergies/allergies/new',
             type: 'post',
-            dataType: 'text',
+            dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
                 if (success) {
@@ -66,7 +66,7 @@ $.Model.extend('Allergies.Models.Allergy',
         $.ajax({
             url: '/apps/allergies/allergies/' + id + '/replace',
             type: 'post',
-            dataType: 'text',
+            dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
                 if (success) {
