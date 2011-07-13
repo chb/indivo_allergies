@@ -29,8 +29,11 @@ def get_indivo_client(request, with_session_token=True):
         client.update_token(request.session['access_token'])
     return client
 
-def parse_token_from_response(resp):
-    token = cgi.parse_qs(resp.response['response_data'])
+def parse_token_from_response(res):
+    if not res or not res.response:
+        return {}
+    
+    token = cgi.parse_qs(res.response.get('response_data', ''))
     for k, v in token.iteritems():
         token[k] = v[0]
     return token

@@ -34,20 +34,21 @@ def start_auth(request):
     # prepare request token parameters
     params = {'oauth_callback':'oob'}
     if record_id:
-            params['indivo_record_id'] = record_id
+        params['indivo_record_id'] = record_id
     if carenet_id:
-            params['indivo_carenet_id'] = carenet_id
+        params['indivo_carenet_id'] = carenet_id
     
     params['offline'] = 1
     
     # request a request token
-    request_token = parse_token_from_response(client.post_request_token(data=params))
+    res = client.post_request_token(data=params)
+    request_token = parse_token_from_response(res)
     
     # store the request token in the session for when we return from auth
     request.session['request_token'] = request_token
     
     # redirect to the UI server
-    return HttpResponseRedirect(settings.INDIVO_UI_SERVER_BASE + '/oauth/authorize?oauth_token=%s' % request_token['oauth_token'])
+    return HttpResponseRedirect(settings.INDIVO_UI_SERVER_BASE + '/oauth/authorize?oauth_token=%s' % request_token.get('oauth_token', ''))
 
 def after_auth(request):
     """
@@ -253,14 +254,16 @@ def allergies(request):
     num_docs = 0
     all_reports = []
     for stat in stat_arr:
-        xml = client.read_allergies(record_id = record_id, parameters = { 'status': stat }).response['response_data']
-        reports_et = parse_xml(xml)
-        reports_et_list = list(reports_et)
-        num_docs += int(reports_et_list[0].attrib['total_document_count'])
-        # don't bother about limit, offset, order_by and consort for now...
-        
-        reports_for_parsing = list(reports_et.findall('Report'))
-        all_reports.extend(reports_for_parsing)
+        res = client.read_allergies(record_id = record_id, parameters = { 'status': stat })
+        if res:
+            xml = res.response['response_data']
+            reports_et = parse_xml(xml)
+            reports_et_list = list(reports_et)
+            num_docs += int(reports_et_list[0].attrib['total_document_count'])
+            # don't bother about limit, offset, order_by and consort for now...
+            
+            reports_for_parsing = list(reports_et.findall('Report'))
+            all_reports.extend(reports_for_parsing)
     
     # parse all reports
     parsed_reports = []
