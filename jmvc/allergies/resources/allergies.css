@@ -84,7 +84,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #allergy_form textarea { height: 8.5em; padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
 #allergy_form .short { width: 30%; }
-#allergy_form .error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
+#allergy_form input.error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 #allergy_form p { margin: 0; padding-top: 1em; }
 
 
@@ -131,6 +131,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .small { font-size: 10px; line-height: 1.4 }
 .mini { font-size: 8px; line-height: 1.1; }
 .bold { font-weight: bold; }
+div.error { padding: 0.5em 0; color: #800; }
 .red { color: #800; }
 .green { color: #480; }
 .attention { margin: 3em 2em; }

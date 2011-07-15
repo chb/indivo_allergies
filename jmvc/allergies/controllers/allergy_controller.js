@@ -11,7 +11,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 },
 /* @Prototype */
 {
-	statusToGet: [ 'active' ],
+	showingStatus: [ 'active' ],
 	
 	ready: function() {
 		if (!$("#allergy").is('*')) {
@@ -19,30 +19,42 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		}
 		$('#allergy').html(this.view('loading'));
 	},
-	
 	load: function() {
-		Allergies.Models.Allergy.findAll({ 'status': this.statusToGet.join('+') }, this.callback('list'));
+		this.getList(this.showingStatus);
 	},
 	
+	getList: function(get_status) {
+	    Allergies.Models.Allergy.findAll({ 'status': (get_status ? get_status.join('+') : 'active') }, this.callback('list'));
+	},
 	list: function(allergies) {
-		// we can use a callback here if we need strict ordering (e.g. for iframe resize)
-		var _this = this;
-		//this.updateFilterButtons();
-		var callback = function() {
-			$('#loading').hide();
-		};
-		var _show = function(callback) {
-			$('#allergy').html(_this.view('init',
-				{
-					'reports':	allergies,
-					'summary':	allergies.summary
-				}));
-			_this.updateFilterButtons(_this.statusToGet);
-			if (callback) {
-				callback();
-			}
-		};
-		_show(callback);
+	    if ('success' == allergies.status) {
+            
+            // we can use a callback here if we need strict ordering (e.g. for iframe resize)
+            var self = this;
+            var callback = function() {
+                $('#loading').hide();
+            };
+            var _show = function(callback) {
+                $('#allergy').html(self.view('init',
+                    {
+                        'reports':	allergies,
+                        'summary':	allergies.summary
+                    }));
+                if (allergies.summary) {
+                    self.updateFilterButtons(allergies.summary.showing_status);
+                }
+                if (callback) {
+                    callback();
+                }
+            };
+            _show(callback);
+        }
+        else {
+            alert("Error getting allergies:\n\n" + allergies.data);
+            if (allergies.summary) {
+                this.updateFilterButtons(allergies.summary.showing_status);
+            }
+        }
 	},
 	
 	
@@ -51,38 +63,43 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	 */
 	'#filter_buttons input click': function(button) {
 		var stat = button.val();
+		var checked = button.get(0).checked;
+		var get_status = this.showingStatus.slice(0);       // we want a copy
 		
 		// activate status
-		if (button.get(0).checked) {
-			this.statusToGet.push(stat);
+		if (checked) {
+			get_status.push(stat);
 		}
 		
 		// disable status
 		else {
-			if (this.statusToGet.length <= 1) {
+			if (get_status.length <= 1) {
 				button.attr('checked', true);
 				return;
 			}
-			for (var i = 0; i < this.statusToGet.length; i++) {
-				if (this.statusToGet[i] == stat) {
-					this.statusToGet.splice(i, 1);
+			for (var i = 0; i < get_status.length; i++) {
+				if (get_status[i] == stat) {
+					get_status.splice(i, 1);
 					break;
 				}
 			}
 		}
 		
 		// fire off
-		button.replaceWith('<img src="jmvc/allergies/resources/spinner-small.gif" alt="" />');
-		this.statusToGet = _.uniq(this.statusToGet);
-		this.load();
+		button.hide().before('<img src="jmvc/allergies/resources/spinner-small.gif" alt="" />');
+		this.getList(get_status);
 	},
-	updateFilterButtons: function(enabled) {
-		if ('object' != typeof(enabled)) {
-			return;
-		}
-		$('#filter_buttons').find('input[type="checkbox"]').each(function(i, elem) {
-																		elem.checked = (enabled.indexOf($(elem).val()) >= 0);
-																	});
+	updateFilterButtons: function(showing) {
+	    if (showing && showing.length > 0) {
+	        this.showingStatus = showing;
+	    }
+		var enableds = this.showingStatus;
+		var area = $('#filter_buttons');
+		area.find('img').remove();
+		area.find('input[type="checkbox"]').each(function(i, elem) {
+                                                        elem.checked = (enableds.indexOf($(elem).val()) >= 0);
+                                                        $(elem).show();
+                                                    });
 	},
 	
 	
@@ -124,13 +141,17 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	didLoadHistory: function(div, data, textStatus, xhr) {
-		if ('success' == textStatus) {
-			if (data.length > 0) {
+		if ('success' == textStatus && 'success' == data.status) {
+			if (data.data.length > 0) {
 				var parent = div.find('div.history');
-				for (var i = 0; i < data.length; i++) {
-					parent.append(this.view('history', data[i]));
+				parent.removeClass('red');
+				for (var i = 0; i < data.data.length; i++) {
+					parent.append(this.view('history', data.data[i]));
 				}
 			}
+		}
+		else {
+		    div.find('div.history').addClass('red').html('Failed to load history:<br />' + data.data);
 		}
 		div.find('div.history_spinner').hide();
 	},
@@ -152,8 +173,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			}
 		}
 	},
-	didLoadOneHistory: function(div, id, entry) {
-		if (entry) {
+	didLoadOneHistory: function(div, id, allergy) {
+		if ('success' == allergy.status) {
 			var node_id = 'one_hist_' + id;
 			if ($('#' + node_id).is('*')) {
 				$('#' + node_id).remove();
@@ -167,7 +188,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				// load data
 				var parent = this.allergyParentFor(div);
 				var latest = parent.model().meta.latest;
-				var data = { meta: { status: 'replaced', latest: latest }, item: entry };
+				var data = { meta: { status: 'replaced', latest: latest }, item: allergy };
 				var hist = $($(this.view('list', data)).html()).attr('id', node_id);
 				div.after(hist);
 				
@@ -176,6 +197,11 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				hist.find('.status_replaced').first().append(replace);
 			}
 		}
+		else {
+		    alert("Error fetching history item:\n\n" + allergy.data);
+		    var img = div.find('img.history_type').first();
+			img.attr('src', img.attr('data-src'));
+		}
 	},
 	
 	// restoring is submitting item data of a history item as a new replacement document
@@ -183,8 +209,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	    if (confirm("Are you sure you wish to restore this version?")) {
             if (allergy) {
                 var button = $(ev.currentTarget);
-                var sender = button.parent();
-                button.replaceWith('<img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="Restoring..." />');
+                button.hide().before('<img src="jmvc/allergies/resources/spinner-small-ondark.gif" alt="Restoring..." />');
                 
                 // create the post values and submit as new document
                 var data = {
@@ -195,7 +220,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
                     specifics:		allergy.item.specifics,
                     diagnosed_by:	allergy.item.diagnosedBy
                 }
-                Allergies.Models.Allergy.update(allergy.meta.latest, data, this.callback('didRestoreFrom', sender));
+                Allergies.Models.Allergy.update(allergy.meta.latest, data, this.callback('didRestoreFrom', button));
             }
             else {
                 alert("restoreFrom()\n\nProgramming-Error: The allergy item could not be accessed");
@@ -203,9 +228,16 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		}
 	},
 	didRestoreFrom: function(sender, data, status) {
-		var div = this.allergyParentFor(sender);
-		var allergy = new Allergies.Models.Allergy(data.data);
-		this.update(div, allergy);
+        var div = this.allergyParentFor(sender);
+        if ('success' == status && 'success' == data.status) {
+            var allergy = new Allergies.Models.Allergy(data.data);
+            this.update(div, allergy);
+        }
+        else {
+            alert("Failed to restore:\n\n" + data.data);
+            sender.parent().find('img').remove();
+            sender.show();
+        }
 	},
 	
 	
@@ -231,7 +263,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				var warning = ('archived' == new_status) ? "Reason for archiving this allergy?" : "Reason for re-activating this allergy?";
 				var button_title = ('archived' == new_status) ? "Archive" : "Unarchive";
 				var div = this.allergyParentFor(button);
-				this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', button, new_status));
+				this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', new_status));
 				break;
 				
 			case 'void':
@@ -239,7 +271,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				var warning = ('void' == new_status) ? "Reason for voiding this allergy?" : "Reason for unvoiding this allergy?";
 				var button_title = ('void' == new_status) ? "Void" : "Unvoid";
 				var div = this.allergyParentFor(button);
-				this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', button, new_status));
+				this.askForConfirmation(div, allergy, warning, true, button_title, this.callback('setStatus', new_status));
 				break;
 			default:
 				alert("Unknown actionButtonAction '" + action + '"');
@@ -251,22 +283,23 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	/**
 	 * Changing status
 	 */
-	setStatus: function(sender, new_status, allergy, reason) {
+	setStatus: function(new_status, sender, allergy, reason) { 
 		if (!allergy || !reason) {
 			alert("You must specify a reason when changing the status");
 		}
 		else {
 			this.indicateActionOn(sender);
-			allergy.setStatus(new_status, reason, this.callback('didSetStatus', sender));
+			allergy.setStatus(new_status, reason, this.callback('didSetStatus', sender, new_status));
 		}
 	},
-	didSetStatus: function(sender, data, textStatus) {
-		if ('success' == textStatus) {
+	didSetStatus: function(sender, new_status, data, textStatus) {
+		if ('success' == textStatus && 'success' == data.status) {
 			var parent = this.allergyParentFor(sender);
-			this.update(parent, data);
+			var allergy = new Allergies.Models.Allergy(data.data);
+			this.update(parent, data.data);
 		}
 		else {
-			alert('Failed to change status: ' + data);
+			alert("Failed to " + new_status + " allergy:\n\n" + data.data);
 			this.actionIsDone(sender);
 		}
 	},
@@ -280,12 +313,13 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	'form submit': function(form, event) {
-		form.find('input').removeClass('error')
+		form.find('input').removeClass('error');
+		form.find('div.error').remove();
 		form.find('input[type="submit"]').attr('disabled', 'disabled');
 		var id = form.find('input[name="id"]').val();
 		var params = form.serializeArray();
 		
-		Allergies.Models.Allergy.update(id, params, this.callback('formReturn'));	// "update" will call "create" if no id is given
+		Allergies.Models.Allergy.update(id, params, this.callback('formReturn', form));	    // "update" will call "create" if no id is given
 	},
 	
 	showFormFor: function(button, allergy) {
@@ -303,16 +337,15 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	// handle form returns
-	formReturn: function(data, status) {        // status will always be 'success', look in the data object
+	formReturn: function(form, data, status) {        // status will always be 'success', look in the data object
 		if (200 == data.status) {
-			this.load();
+			this.getList(this.showingStatus);
 			return;
 		}
 		
 		// there was an error; parse it
 		if (data && data.data) {
 			if (data.data.match(/problem processing allergy report/i)) {
-				var form = $('#allergy_form');
 				
 				// find all erroneous fields
 				var reg = /column\s+"([^"]+)"/gi;
@@ -321,9 +354,12 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 					form.find('input[name="' + cols[i] + '"]').addClass('error');
 				}
 			}
+			else {
+			    form.find('div.bottom_buttons').after($('<div/>', { className: 'error' }).html(data.data));
+			}
 		}
 		else {
-			alert("There was a " + data.status + " error, please try again\n\n" + (data.data ? data.data : ''));
+			alert("There was a " + data.status + " error, please try again");
 		}
 		$('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
 	},
@@ -391,7 +427,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				var sender = $(this);
 				var model = self.allergyParentFor($(this)).model();
 				var input = sender.parent().parent().find('.confirm_input').val();
-				confirm_action(model, input);
+				confirm_action(sender, model, input);
 			});
 		}
 		else if (!parent) {

@@ -11,6 +11,7 @@ from utils import *
 from django.utils import simplejson
 from xml.etree import ElementTree
 from django.shortcuts import render_to_response
+from ui.errors import ErrorStr
 import settings # app local
 
 NS = '{http://indivo.org/vocab/xml/documents#}'
@@ -120,6 +121,9 @@ def new_allergy(request):
     # we always return a 200 HttpResponse, let's deal with errors in the controller
     status = res.response['response_status']
     data = res.response['response_data']
+    if status != 200:
+        data = ErrorStr(data).str()
+    
     return HttpResponse(simplejson.dumps({ 'status': status, 'data': data }))
 
 
@@ -139,10 +143,13 @@ def replace_allergy(request, allergy_id):
     client = get_indivo_client(request)
     res = client.replace_document(record_id = record_id, document_id = allergy_id, data = new_xml)
     
-    status = res.response['response_status']
+    status = 'success'
     meta_xml = res.response['response_data'] if res.response['response_data'] is not '' else None
     allergy = None
-    if meta_xml:
+    if 200 != res.response.get('response_status'):
+        status = 'error'
+        allergy = ErrorStr(meta_xml).str()
+    else:
         meta = _parse_meta(parse_xml(meta_xml))
         if meta['id']:
             doc_xml = client.read_document(record_id = record_id, document_id = meta['id']).response['response_data']
@@ -165,10 +172,17 @@ def one_allergy(request, allergy_id):
     if request.session.has_key('record_id'):
         record_id = request.session['record_id']
     
-    xml = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
-    allergy = _parse_allergy(parse_xml(xml))
+    status = 'success'
+    res = client.read_document(record_id = record_id, document_id = allergy_id)
+    res_data = res.response.get('response_data')
     
-    return HttpResponse(simplejson.dumps({ 'status': 'success', 'data': allergy }), mimetype='text/plain')
+    if 200 != res.response.get('response_status'):
+        status = 'error'
+        allergy = ErrorStr(res_data).str()
+    else:
+        allergy = _parse_allergy(parse_xml(res_data))
+    
+    return HttpResponse(simplejson.dumps({'status': status, 'data': allergy}), mimetype='text/plain')
 
 
 def allergy_history(request, allergy_id):
@@ -179,30 +193,45 @@ def allergy_history(request, allergy_id):
     
     client = get_indivo_client(request)
     record_id = request.session['record_id']
+    status = 'success'
+    data = None
     
     # 1: fetch history
-    xml = client.read_document_status_history(record_id = record_id, document_id = allergy_id).response['response_data']
-    history_etree = parse_xml(xml)
-    history = _parse_status(history_etree.findall('DocumentStatus'))
+    res = client.read_document_status_history(record_id = record_id, document_id = allergy_id)
+    res_data = res.response.get('response_data')
     
-    # 2: fetch versions
-    xml = client.read_document_versions(record_id = record_id, document_id = allergy_id).response['response_data']
-    version_etree = parse_xml(xml)
-    versions = []
-    for v in version_etree.findall('Document'):
-        versions.append(_parse_meta(v))
+    if 200 != res.response.get('response_status'):
+        status = 'error'
+        data = ErrorStr(res_data).str()
+    else:
+        history_etree = parse_xml(res_data)
+        history = _parse_status(history_etree.findall('DocumentStatus'))
+        
+        # 2: fetch versions
+        res = client.read_document_versions(record_id = record_id, document_id = allergy_id)
+        res_data = res.response.get('response_data')
+        
+        if 200 != res.response.get('response_status'):
+            status = 'error'
+            data = ErrorStr(res_data).str()
+        else:
+            version_etree = parse_xml(res_data)
+            versions = []
+            for v in version_etree.findall('Document'):
+                versions.append(_parse_meta(v))
+            
+            # mix and sort
+            history.extend(versions)
+            history.sort(key=lambda x: datetime.datetime.strptime(x['createdAt'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
+            data = history
     
-    # mix and sort
-    history.extend(versions)
-    history.sort(key=lambda x: datetime.datetime.strptime(x['createdAt'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
-    
-    return HttpResponse(simplejson.dumps(history), mimetype='text/plain')
+    return HttpResponse(simplejson.dumps({'status': status, 'data': data}), mimetype='text/plain')
 
 
 def set_allergy_status(request, allergy_id):
     ret = {}
     if 'POST' != request.method:
-        ret = { 'status': 'error', 'data': 'method not allowed' }
+        ret = { 'status': 'error', 'data': ErrorStr('method not allowed').str() }
     else:
         client = get_indivo_client(request)
         record_id = request.session['record_id']
@@ -222,9 +251,9 @@ def set_allergy_status(request, allergy_id):
                 'meta': _parse_meta(meta),
                 'item': _parse_allergy(doc)
             }
-            ret = { 'status': 'success', 'data': [ report ] }
+            ret = { 'status': 'success', 'data': report }
         else:
-            ret = { 'status': 'error', 'data': res.response['response_data'] if res.response['response_data'] else status }
+            ret = { 'status': 'error', 'data': ErrorStr(res.response['response_data'] if res.response['response_data'] else status).str() }
     
     return HttpResponse(simplejson.dumps(ret))
 
@@ -238,9 +267,9 @@ def allergies(request):
     limit = int(request.GET.get('limit', 100)) # defaults
     offset = int(request.GET.get('offset', 0))
     status = request.GET.get('status', 'active')
-    stat_arr = status.split('+')
-    if len(stat_arr) < 1:
-        stat_arr = [ 'active' ]
+    stat_set = set(status.split('+'))
+    if len(stat_set) < 1:
+        stat_set = [ 'active' ]
     client = get_indivo_client(request)
     
     if request.session.has_key('record_id'):
@@ -251,19 +280,28 @@ def allergies(request):
     
     # can only get documents with one status at a time, so loop over the desired status here
     # and collect all reports to be parsed in a set
+    status = 'success'
+    err_str = None
     num_docs = 0
     all_reports = []
-    for stat in stat_arr:
+    stat_fetched = []
+    for stat in stat_set:
         res = client.read_allergies(record_id = record_id, parameters = { 'status': stat })
-        if res:
-            xml = res.response['response_data']
-            reports_et = parse_xml(xml)
+        data = res.response.get('response_data')
+        if 200 != res.response.get('response_status'):
+            status = 'error'
+            err_str = ErrorStr(data).str()
+            all_reports = []
+            break
+        else:
+            reports_et = parse_xml(data)
             reports_et_list = list(reports_et)
             num_docs += int(reports_et_list[0].attrib['total_document_count'])
             # don't bother about limit, offset, order_by and consort for now...
             
             reports_for_parsing = list(reports_et.findall('Report'))
             all_reports.extend(reports_for_parsing)
+            stat_fetched.append(stat)
     
     # parse all reports
     parsed_reports = []
@@ -278,15 +316,17 @@ def allergies(request):
     
     # build response
     reports = {
+        'status': status,
         'summary': {
             'total_document_count': num_docs,
+            'showing_status':       stat_fetched
           # 'limit':                reports_et_list[0].attrib['limit'],
           # 'offset':               reports_et_list[0].attrib['offset'],
           # 'order_by':             reports_et_list[0].attrib['order_by'],
           # 'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
           # 'current_page':         (offset / limit) + 1        # 1-index this
         },
-        'data': parsed_reports
+        'data': parsed_reports if len(parsed_reports) > 0 else err_str
     }
     # print simplejson.dumps(reports)
     
