@@ -333,6 +333,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		$('#allergy').append($('<div/>', { id: 'form_container' }).append(form));
 		this.alignFloatingDivTo(form, button);
 		
+		// setup fields
+		form.find('input[name="date_diagnosed"]').datepicker({dateFormat: 'yy-mm-dd' });
 		form.find('input[name="allergen_name"]').focus();
 	},
 	

@@ -77,11 +77,11 @@ def after_auth(request):
     request.session['access_token'] = access_token
     
     if access_token.has_key('xoauth_indivo_record_id'):
-            request.session['record_id'] = access_token['xoauth_indivo_record_id']
+        request.session['record_id'] = access_token['xoauth_indivo_record_id']
     else:
-            if request.session.has_key('record_id'):
-                    del request.session['record_id']
-            request.session['carenet_id'] = access_token['xoauth_indivo_carenet_id']
+        if request.session.has_key('record_id'):
+            del request.session['record_id']
+        request.session['carenet_id'] = access_token.get('xoauth_indivo_carenet_id')
     
     # now get the long-lived token using this access token
     client= get_indivo_client(request)
@@ -274,9 +274,12 @@ def allergies(request):
     
     if request.session.has_key('record_id'):
         record_id = request.session['record_id']
+    elif request.session.has_key('record_id'):
+        return HttpResponse('FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...', mimetype='text/plain')
     else:
-        print 'FIXME: no client support for labs via carenet. See problems app for an example.. Exiting...'
-        return
+        status = 'error'
+        data = 'No record and no carenet id, cannot continue'
+        return HttpResponse(simplejson.dumps({'status': status, 'data': data}), mimetype='text/plain')
     
     # can only get documents with one status at a time, so loop over the desired status here
     # and collect all reports to be parsed in a set

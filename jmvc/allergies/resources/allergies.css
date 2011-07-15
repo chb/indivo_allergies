@@ -122,8 +122,9 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .details { font-size: 1.1em; color: #464337; }
 .specifics { margin: 0.5em 0; padding: 0.5em 0; font-size: 0.9em; border-top: 1px dotted rgb(0,0,0); border-top-color: rgba(0,0,0,0.1); }
 .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
-.meta { position: relative; font-size: 0.8em; text-align: right; color: rgba(70,67,55,0.7); }
+.meta { position: relative; font-size: 0.85em; text-align: right; color: rgba(70,67,55,0.7); }
 .meta a { margin-left: 1.5em; }
+.meta b { color: #464337; }
 .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
 .bottom_buttons input[type="submit"] { font-weight: bold; }
 .active { text-shadow: 0 1px 4px rgba(64,128,0,0.85); }

@@ -10,7 +10,8 @@ steal.plugins(
 .resources(
   // don't add .js to file names (it's flakey on jmvc alpha 10)
   // oh, and don't add jquery here... duh!
-  "underscore-min"
+  'underscore-min',
+  'jquery-ui-1.8.14.custom.min'
 )
 .models('allergy')
 .controllers('allergy')
