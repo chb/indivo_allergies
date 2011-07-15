@@ -338,7 +338,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	// handle form returns
 	formReturn: function(form, data, status) {        // status will always be 'success', look in the data object
-		if (200 == data.status) {
+		if ('success' == data.status) {
 			this.getList(this.showingStatus);
 			return;
 		}
@@ -408,29 +408,31 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	 * The confirm-callback gets the object as first argument and text entered as second argument
 	 * The decline-callback gets no arguments and if omitted, the confirmatino dialog will be hidden
 	 **/
-	askForConfirmation: function(parent, obj, text, show_input, confirm_text, confirm_action) {
-		if (parent && confirm_action && 'function' == typeof(confirm_action)) {
+	askForConfirmation: function(allergy_parent, obj, text, show_input, confirm_text, confirm_action) {
+		if (allergy_parent && confirm_action && 'function' == typeof(confirm_action)) {
 			var dialog = $(this.view('confirm', {'text': text, 'confirm_text': confirm_text }));
-			parent.append(dialog);
+			allergy_parent.append(dialog);
 			if (show_input) {
-				parent.find('.confirm_input').show().first().focus();
+				allergy_parent.find('.confirm_input').show().first().focus();
 			}
 			
-			// align
-			var box = parent.find('div.confirm_box');
-			var m_top = (dialog.innerHeight() - box.outerHeight()) / 2;
-			box.css('margin-top', m_top + 'px');
+			// align with buttons
+			var box = allergy_parent.find('div.confirm_box');
+			var buttons = allergy_parent.find('.bottom_buttons');
+			var center = (dialog.innerHeight() - box.outerHeight()) / 2;
+			var m_top = Math.max(buttons.position().top - 45, 25);
+			box.css('margin-top', Math.min(center, m_top) + 'px');
 			
 			// bind confirm action
 			self = this;
 			dialog.find('input[type="submit"]').click(function() {
 				var sender = $(this);
-				var model = self.allergyParentFor($(this)).model();
+				var model = allergy_parent.model();
 				var input = sender.parent().parent().find('.confirm_input').val();
 				confirm_action(sender, model, input);
 			});
 		}
-		else if (!parent) {
+		else if (!allergy_parent) {
 			alert("Programming error: No parent element given");
 		}
 		else {
