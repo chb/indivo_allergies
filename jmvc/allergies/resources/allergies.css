@@ -36,13 +36,14 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 
-.one_allergy h2 { display: inline; margin: 0; font-size: 1.6em; }
+.one_allergy h2 { position: relative; display: inline; margin: 0 100px 0 0; font-size: 1.6em; }
 .one_allergy h3 {
     display: inline; margin: 0 0 0 1em; font-size: 1.3em;
     font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
 }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
 .one_allergy_inner .warnsign { margin: -17px -20px 0; }
+.one_allergy .type_image { position: absolute; top: 0; right: 0; }
 
 .one_allergy_editing .bottom_buttons { text-align: left; }
 .one_allergy_editing .bottom_buttons .bold { float: right; }
@@ -79,12 +80,11 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 
 /* allergy form */
-#form_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 2; }
+#form_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 20; }
 #allergy_form { position: relative; width: 520px; text-align: left; }
 #allergy_form textarea { height: 8.5em; padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
 #allergy_form .short { width: 30%; }
-#allergy_form input.error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 #allergy_form p { margin: 0; padding-top: 1em; }
 
 
@@ -99,13 +99,13 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
-.close_button { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; }
+.close_button { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; z-index: 2; }
 .action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
 .action_area img { margin-right: 0.25em; vertical-align: -8%; }
 
 /* confirmation dialog */
 .confirm {
-    position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px;
+    z-index: 3; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px;
     background: rgba(0,0,0,0.5); border-radius: inherit;
 }
 .confirm_box {
@@ -124,7 +124,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .family { font: italic 0.917em Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6); }
 .meta { position: relative; font-size: 0.85em; text-align: right; color: rgba(70,67,55,0.7); }
 .meta a { margin-left: 1.5em; }
-.meta b { color: #464337; }
+.meta b { color: rgb(87,84,73); }
 .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
 .bottom_buttons input[type="submit"] { font-weight: bold; }
 .active { text-shadow: 0 1px 4px rgba(64,128,0,0.85); }
@@ -133,6 +133,7 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .mini { font-size: 8px; line-height: 1.1; }
 .bold { font-weight: bold; }
 div.error { padding: 0.5em 0; color: #800; }
+input.error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 .red { color: #800; }
 .green { color: #480; }
 .attention { margin: 3em 2em; }

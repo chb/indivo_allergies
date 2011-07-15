@@ -283,20 +283,26 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	/**
 	 * Changing status
 	 */
-	setStatus: function(new_status, sender, allergy, reason) { 
-		if (!allergy || !reason) {
-			alert("You must specify a reason when changing the status");
+	setStatus: function(new_status, sender, allergy, input) { 
+		if (!allergy || !input.val()) {
+		    if (input.is('*')) {
+		        input.addClass('error');
+		    }
+		    else {
+    			alert("You must specify a reason when changing the status");
+    		}
 		}
 		else {
+		    input.removeClass('error');
 			this.indicateActionOn(sender);
-			allergy.setStatus(new_status, reason, this.callback('didSetStatus', sender, new_status));
+			allergy.setStatus(new_status, input.val(), this.callback('didSetStatus', sender, new_status));
 		}
 	},
 	didSetStatus: function(sender, new_status, data, textStatus) {
 		if ('success' == textStatus && 'success' == data.status) {
 			var parent = this.allergyParentFor(sender);
 			var allergy = new Allergies.Models.Allergy(data.data);
-			this.update(parent, data.data);
+			this.update(parent, allergy);
 		}
 		else {
 			alert("Failed to " + new_status + " allergy:\n\n" + data.data);
@@ -430,7 +436,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			dialog.find('input[type="submit"]').click(function() {
 				var sender = $(this);
 				var model = allergy_parent.model();
-				var input = sender.parent().parent().find('.confirm_input').val();
+				var input = sender.parent().parent().find('input.confirm_input');
 				confirm_action(sender, model, input);
 			});
 		}

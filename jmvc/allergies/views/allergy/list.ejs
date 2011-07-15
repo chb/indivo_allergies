@@ -6,7 +6,8 @@
         <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
         <% } %>
         <h2><%= item.name %></h2>
-        <h3><%= item.type %></h3>
+        <!--h3><%= item.type %></h3-->
+        <img class="type_image" src="resources/allergy_types/<%= item.type ? item.type : 'Other' %>.png" alt="" title="<%= item.type %>" />
         
         <!-- MAIN -->
         <% if (item.reaction) { %>

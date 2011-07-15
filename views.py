@@ -118,10 +118,12 @@ def new_allergy(request):
     client = get_indivo_client(request)
     res = client.post_document(record_id = request.session['record_id'], data = new_xml)
     
-    # we always return a 200 HttpResponse, let's deal with errors in the controller
-    status = res.response['response_status']
+    # deal with errors in the controller
+    status_no = res.response['response_status']
+    status = 'success'
     data = res.response['response_data']
     if status != 200:
+        status = 'error'
         data = ErrorStr(data).str()
     
     return HttpResponse(simplejson.dumps({ 'status': status, 'data': data }))
