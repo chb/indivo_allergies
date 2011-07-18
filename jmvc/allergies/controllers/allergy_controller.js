@@ -213,12 +213,14 @@ $.Controller.extend('Allergies.Controllers.Allergy',
                 
                 // create the post values and submit as new document
                 var data = {
-                    date_onset:		allergy.item.dateDiagnosed,
-                    allergen_type:	allergy.item.type,
-                    allergen_name:	allergy.item.name,
-                    reaction:		allergy.item.reaction,
-                    specifics:		allergy.item.specifics,
-                    diagnosed_by:	allergy.item.diagnosedBy
+                    date_onset:		        allergy.item.dateDiagnosed,
+                    allergen_type:	        allergy.item.type,
+                    allergen_name:	        allergy.item.name,
+                    allergen_name_type:	    allergy.item.name_type,
+                    allergen_name_value:	allergy.item.name_value,
+                    reaction:		        allergy.item.reaction,
+                    specifics:		        allergy.item.specifics,
+                    diagnosed_by:	        allergy.item.diagnosedBy
                 }
                 Allergies.Models.Allergy.update(allergy.meta.latest, data, this.callback('didRestoreFrom', button));
             }
@@ -343,12 +345,11 @@ $.Controller.extend('Allergies.Controllers.Allergy',
         form.find('input[name="allergen_name"]').autocomplete({
             source: 'codelookup',
             minLength: 2,
-            appendTo: '#allergy_form_name',
+            appendTo: '#allergy_form',
             select: function(event, ui) {
-                var form = $('#allergy_form_name');
+                var form = $('#allergy_form');
                 form.find('input[name="allergen_name"]').val(ui.item.physician_value);
-                form.find('input[name="allergen_name_code"]').val(ui.item.code);
-                form.find('.code_info').html('SNOMED-CT code: <b>' + ui.item.code + '</b>').show();
+                form.find('input[name="allergen_name_value"]').val(ui.item.code);
             }
         }).data('autocomplete')._renderItem = function(list, item) {
 			return $('<li/>').data('item.autocomplete', item).append('<a>' + item.physician_value + '</a>').appendTo(list);

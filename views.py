@@ -476,7 +476,7 @@ def _allergy_params_from_post(post):
                 'date_diagnosed':       date_diag,
                 'allergen_type':        post.get('allergen_type', 'unknown'),
                 'allergen_name':        post.get('allergen_name', ''),
-                'allergen_name_code':   post.get('allergen_name_code'),
+                'allergen_name_value':  post.get('allergen_name_value'),
                 'reaction':             post.get('reaction', 'unknown'),
                 'specifics':            post.get('specifics', ''),
                 'diagnosed_by' :        post.get('diagnosed_by', '')
