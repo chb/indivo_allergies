@@ -17,7 +17,13 @@
     <h2>Allergies</h2>
 </div>
 
-<div id="allergy_list" class="light">
+<table id="allergy_list" class="light">
+<colgroup>
+    <col width="33%" />
+    <col width="34%" />
+    <col width="33%" />
+</colgroup>
+<tr>
 <%
 if (reports && reports.length > 0) {
     var reports_sorted = _(reports).sortBy(function(r){
@@ -26,14 +32,18 @@ if (reports && reports.length > 0) {
         else
             return '-99999';
     });
-
-    _(reports_sorted.reverse()).each(function(report) {
-%>
-    <%= view('./views/allergy/list', report) %>
-<% }) %>
-    <div class="clear"> </div>
-<% }
+    
+    var reports_reverse = reports_sorted.reverse();
+    for (var i = 1; i <= reports_reverse.length; i++) {
+        var report = reports_reverse[i-1]; %>
+        <td><%= view('./views/allergy/list', report) %></td>
+        <% if (0 == i % 3) { %>
+        </tr><tr>
+        <% } %>
+    <% }
+}
 else { %>
-    <h3 class="attention">No reported allergies</h3>
+    <td colspan="3"><div class="attention">No reported allergies</div></td>
 <% } %>
-</div>
+</tr>
+</table>

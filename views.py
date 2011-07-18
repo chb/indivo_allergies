@@ -326,9 +326,6 @@ def allergies(request):
         if parsed_report:
             parsed_reports.append(parsed_report)
     
-    # sort reports
-    
-    
     # build response
     reports = {
         'status': status,
@@ -341,7 +338,7 @@ def allergies(request):
           # 'total_pages_count':    int(reports_et_list[0].attrib['total_document_count']) / limit,
           # 'current_page':         (offset / limit) + 1        # 1-index this
         },
-        'data': parsed_reports if len(parsed_reports) > 0 else err_str
+        'data': parsed_reports if not err_str else err_str
     }
     # print simplejson.dumps(reports)
     

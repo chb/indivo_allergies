@@ -1,6 +1,6 @@
-body { background: #FAFAFA; padding-bottom: 1.5em; } /* don't inherit background, so we don't color the inside with record colors */
+body { background: inherit; padding-bottom: 1.5em; }
 h2 { margin-bottom: 1em; }
-td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
+h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 #allergy { position: relative; }
 #loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
@@ -12,13 +12,12 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
 #filter_buttons img { margin-right: 0.55em; vertical-align: -5%; }
 #filter_buttons label { margin-right: 1.5em; }
-#allergy_list td:first-child { font-size: 1.2em; font-weight: bold; }
 
 
 /* allergy overview */
+#allergy_list td { vertical-align: top; border: none; }
 .one_allergy {
-    position: relative; float: left; min-width: 280px; max-width: 400px; width: 31%; margin: 0 2% 2% 0;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
+    position: relative; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
@@ -30,7 +29,6 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .one_allergy_inner {
-    min-height: 145px;
     padding: 15px 18px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
@@ -139,7 +137,7 @@ div.error { padding: 0.5em 0; color: #800; }
 input.error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 .red { color: #800; }
 .green { color: #480; }
-.attention { margin: 3em 2em; }
+.attention { margin: 3em 2em; font-size: 1.4em; font-weight: bold; text-align: center; }
 a.disabled:hover { border: none; cursor: default; }
 .action_spinner { margin:0 1em; vertical-align:-11%; }
 .clear { clear: both; }
@@ -170,6 +168,7 @@ a.disabled:hover { border: none; cursor: default; }
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: black; text-decoration: none; }
 .ui-widget :active { outline: none; }
 
+#ui-datepicker-div { display: none; }
 .ui-datepicker-header .ui-state-hover { background: transparent; }
 .ui-datepicker-calendar .ui-state-highlight {
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(246,168,40)), to(rgb(246,168,40)));

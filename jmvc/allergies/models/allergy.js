@@ -17,7 +17,7 @@ $.Model.extend('Allergies.Models.Allergy',
             dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
-                var my_data = ('success' == data.status) ? self.wrapMany(data) : data      // wrapMany is deprecated (but models() doesn't want to play with me...)!
+                var my_data = ('success' == data.status) ? self.wrapMany(data) : data      // wrapMany is deprecated (but models() doesn't work with this version)!
                 success(my_data);
             }),
             error: error
@@ -34,7 +34,7 @@ $.Model.extend('Allergies.Models.Allergy',
             dataType: 'json',
             data: params,
             success: this.callback(function(data, textStatus, xhr) {
-                var my_data = ('success' == data.status) ? self.wrap(data.data) : data      // wrap is deprecated (but models() doesn't want to play with me...)!
+                var my_data = ('success' == data.status) ? self.wrap(data.data) : data      // wrap is deprecated (but models() doesn't work with this version)!
                 my_data.status = data.status;
                 success(my_data);
             }),
