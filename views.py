@@ -111,6 +111,7 @@ def new_allergy(request):
         return HttpResponse('error')
     
     # parse the data
+    record_id = request.session['record_id']
     params = _allergy_params_from_post(request.POST)
     new_xml = render_raw('allergy', params, type='xml')
     
@@ -118,15 +119,23 @@ def new_allergy(request):
     client = get_indivo_client(request)
     res = client.post_document(record_id = request.session['record_id'], data = new_xml)
     
-    # deal with errors in the controller
-    status_no = res.response['response_status']
+    # parse the XML and return as JSON
     status = 'success'
-    data = res.response['response_data']
-    if status != 200:
+    meta_xml = res.response.get('response_data', None) if res.response else None
+    allergy = None
+    if 200 != res.response.get('response_status'):
         status = 'error'
-        data = ErrorStr(data).str()
+        allergy = ErrorStr(meta_xml).str()
+    else:
+        meta = _parse_meta(parse_xml(meta_xml))
+        if meta['id']:
+            doc_xml = client.read_document(record_id = record_id, document_id = meta['id']).response['response_data']
+            allergy = _parse_report(parse_xml(doc_xml))             # don't just use _parse_allergy() here because we want the complete allergy json tree
+            if allergy:
+                allergy['meta'] = meta
     
-    return HttpResponse(simplejson.dumps({ 'status': status, 'data': data }))
+    # we always return a 200 HttpResponse, let's deal with errors in the controller
+    return HttpResponse(simplejson.dumps({ 'status': status, 'data': allergy }))
 
 
 def replace_allergy(request, allergy_id):
@@ -145,8 +154,9 @@ def replace_allergy(request, allergy_id):
     client = get_indivo_client(request)
     res = client.replace_document(record_id = record_id, document_id = allergy_id, data = new_xml)
     
+    # parse the XML and return as JSON
     status = 'success'
-    meta_xml = res.response['response_data'] if res.response['response_data'] is not '' else None
+    meta_xml = res.response.get('response_data', None) if res.response else None
     allergy = None
     if 200 != res.response.get('response_status'):
         status = 'error'
@@ -339,6 +349,23 @@ def allergies(request):
 
 
 
+def code_lookup(request):
+    client = get_indivo_client(request)
+    
+    codes = []
+    query = request.GET.get('term', None) if request.GET else None
+    if query:
+        res = client.lookup_code(coding_system='snomed', parameters= {'q': query})
+        if res and res.response and res.response.get('response_status', 0) == 200:
+            codes = simplejson.loads(res.response.get('response_data', '[]'))
+    
+    # the following format is required for the jQuery autocompleter
+    json = {'query': query, 'suggestions': [c['consumer_value'] for c in codes], 'data': codes}
+    
+    return HttpResponse(simplejson.dumps(codes), mimetype="text/plain")
+
+
+
 # Only used by class instances
 def _parse_report(report):
     """
@@ -401,6 +428,9 @@ def _parse_allergy(tree):
                         result.update({'type': e2.text.strip() if e2.text is not None else '' })
                     elif e2.tag == NS+'name':
                         result.update({'name': e2.text.strip() if e2.text is not None else '' })
+                        result.update({'name_type': e2.attrib.get('type', '') })
+                        result.update({'name_value': e2.attrib.get('value', '') })
+                        result.update({'name_abbrev': e2.attrib.get('abbrev', '') })
             elif e.tag == NS+'reaction':
                 result.update({'reaction': e.text.strip() if e.text is not None else '' })
             elif e.tag == NS+'specifics':
@@ -444,15 +474,15 @@ def _allergy_params_from_post(post):
     from datetime import datetime
     date_diag = post['date_onset'] if post.get('date_onset', '') != '' else datetime.now().strftime('%Y-%m-%d')
     
-    # get the variables and create an XML
-    params = {  'code_abbrev':      '',
-                'coding_system':    'snomed',
-                'date_diagnosed':   date_diag,
-                'allergen_type':    post.get('allergen_type', 'unknown'),
-                'allergen_name':    post.get('allergen_name', ''),
-                'reaction':         post.get('reaction', 'unknown'),
-                'specifics':        post.get('specifics', ''),
-                'diagnosed_by' :    post.get('diagnosed_by', '')
+    # get the variables
+    params = {  'coding_system':        'snomed',
+                'date_diagnosed':       date_diag,
+                'allergen_type':        post.get('allergen_type', 'unknown'),
+                'allergen_name':        post.get('allergen_name', ''),
+                'allergen_name_code':   post.get('allergen_name_code'),
+                'reaction':             post.get('reaction', 'unknown'),
+                'specifics':            post.get('specifics', ''),
+                'diagnosed_by' :        post.get('diagnosed_by', '')
             }
     
     return params

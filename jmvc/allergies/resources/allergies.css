@@ -36,7 +36,8 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 
-.one_allergy h2 { position: relative; display: inline; margin: 0 100px 0 0; font-size: 1.6em; }
+.one_allergy h2 { display: block; margin: 0 60px 0 0; font-size: 1.6em; }
+.coded_allergy_type { font-size: 0.8em; }
 .one_allergy h3 {
     display: inline; margin: 0 0 0 1em; font-size: 1.3em;
     font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
@@ -85,7 +86,9 @@ td h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 #allergy_form textarea { height: 8.5em; padding: 2px; }
 #allergy_form .full { float: right; width: 75%; }
 #allergy_form .short { width: 30%; }
-#allergy_form p { margin: 0; padding-top: 1em; }
+#allergy_form .code_info { float: right; display: none; width: 75%; margin-top; 0.3em; font-size: 0.7em; color: inherit; text-align: right; }
+#allergy_form p { clear: right; margin: 0; padding-top: 1em; }
+#allergy_form .ui-autocomplete { max-width: 68%; max-height: 280px; overflow-y: auto; overflow-x: hidden; }
 
 
 /* floating window */
@@ -144,3 +147,40 @@ a.disabled:hover { border: none; cursor: default; }
 /* status */
 .status_inactive {  }
 .status_archived {  }
+
+
+/* jQuery UI overrides */
+.ui-widget .ui-widget { font-size: 1em; }
+.ui-widget-content { color: white; border: 1px solid black; background: black; background: rgba(0,0,0,0.75); box-shadow: 0 4px 10px rgba(0,0,0,0.5) }
+.ui-widget-header { border: none; background: rgb(246,168,40); color: black; font-weight: bold; }
+.ui-widget-header a { color: black; }
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: none; background: rgb(180,180,180); font-weight: bold; color: black;
+}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    color: black; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
+    border: none; border-radius: 0;
+    background: rgb(215,215,215);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(235,235,235)));
+    background-image:-moz-linear-gradient(top, rgb(230,230,230), rgb(210,210,210));
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: none; font-weight: bold; color: black; }
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: black; text-decoration: none; }
+.ui-widget :active { outline: none; }
+
+.ui-datepicker-header .ui-state-hover { background: transparent; }
+.ui-datepicker-calendar .ui-state-highlight {
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(246,168,40)), to(rgb(246,168,40)));
+    background-image:-moz-linear-gradient(top, rgb(252,186,42), rgb(246,168,40));
+}
+.ui-datepicker-calendar .ui-state-active {
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8); color: rgb(220,137,0);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(235,235,235)));
+    background-image:-moz-linear-gradient(top, rgb(230,230,230), rgb(210,210,210));
+}
+
+.ui-autocomplete { position: absolute; }
+.ui-menu-item a { display: block; padding: 0 0.35em; text-shadow: none; }
+

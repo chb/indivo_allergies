@@ -3,7 +3,7 @@
   <diagnosedBy>{{diagnosed_by|escape}}</diagnosedBy>
   <allergen>
     <type type="http://codes.indivo.org/codes/allergentypes/" value="{{allergen_type|escape}}">{{allergen_type|escape}}</type>
-    <name type="http://codes.indivo.org/codes/allergens/" value="{{allergen_name|escape}}">{{allergen_name|escape}}</name>
+    <name type="http://codes.indivo.org/codes/{{coding_system}}/" value="{{allergen_name_code|escape}}" abbrev="{{allergen_name_abbrev|escape}}">{{allergen_name|escape}}</name>
   </allergen>
   <reaction>{{reaction|escape}}</reaction>
   <specifics>{{specifics|escape}}</specifics>

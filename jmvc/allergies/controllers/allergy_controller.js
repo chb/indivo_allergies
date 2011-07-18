@@ -340,8 +340,21 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		this.alignFloatingDivTo(form, button);
 		
 		// setup fields
-		form.find('input[name="date_diagnosed"]').datepicker({dateFormat: 'yy-mm-dd' });
+        form.find('input[name="allergen_name"]').autocomplete({
+            source: 'codelookup',
+            minLength: 2,
+            appendTo: '#allergy_form_name',
+            select: function(event, ui) {
+                var form = $('#allergy_form_name');
+                form.find('input[name="allergen_name"]').val(ui.item.physician_value);
+                form.find('input[name="allergen_name_code"]').val(ui.item.code);
+                form.find('.code_info').html('SNOMED-CT code: <b>' + ui.item.code + '</b>').show();
+            }
+        }).data('autocomplete')._renderItem = function(list, item) {
+			return $('<li/>').data('item.autocomplete', item).append('<a>' + item.physician_value + '</a>').appendTo(list);
+		};
 		form.find('input[name="allergen_name"]').focus();
+		form.find('input[name="date_diagnosed"]').datepicker({dateFormat: 'yy-mm-dd' });
 	},
 	
 	// handle form returns

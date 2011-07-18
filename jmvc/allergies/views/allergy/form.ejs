@@ -5,7 +5,12 @@
         
         <% if (!this.item) { item = {}; meta = {}; } %>
         
-        <p class="bigger">Allergen<input class="full" type="text" name="allergen_name" value="<%= item.name %>" /></p>
+        <p id="allergy_form_name" class="bigger">
+            Allergen
+            <input class="full" type="text" name="allergen_name" value="<%= item.name %>" />
+            <input type="hidden" name="allergen_name_code" value="" />
+            <span class="code_info">SNOMED-CT code: ###</span>
+        </p>
         <p>Type<input class="full" type="text" name="allergen_type" value="<%= item.type %>" /></p>
         
         <p>Reaction<input class="full" type="text" name="reaction" value="<%= item.reaction %>" /></p>
