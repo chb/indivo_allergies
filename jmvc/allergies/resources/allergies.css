@@ -29,20 +29,34 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .one_allergy_inner {
-    padding: 15px 18px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
+    padding: 18px 18px 10px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 
-.one_allergy h2 { display: block; margin: 0 60px 0 0; font-size: 1.6em; }
+.one_allergy h2 { display: block; margin: 0; font-size: 1.6em; }
 .coded_allergy_type { font-size: 0.8em; }
 .one_allergy h3 {
-    display: inline; margin: 0 0 0 1em; font-size: 1.3em;
-    font-style: italic; font-weight: normal; font-family: Corbel, "Lucida Sans", "Gill Sans", sans-serif; color: rgba(70,67,55,0.6);
+    position: absolute; right: 0; top: 0; margin: 0; padding: 0 1em;
+    border: 1px solid rgb(160,160,160); border-radius: 0 4px 0 4px; border-width: 0 0 1px 1px;
+    color: rgb(70,67,55); font-size: 0.8em; font-weight: normal; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background: none repeat scroll 0 0 #DCDCDC;
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(246,168,40)), to(rgb(255,195,40)));
+    background-image:-moz-linear-gradient(top, rgb(246,168,40), rgb(255,195,40));
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
+.one_allergy_editing h3 { right: 23px; border-radius: 0 0 0 4px; }
+.one_allergy:hover h3 { border-color: rgb(120,120,120); }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
-.one_allergy_inner .warnsign { margin: -17px -20px 0; }
-.one_allergy .type_image { position: absolute; top: 0; right: 0; }
+.one_allergy_inner .warnsign { margin: -20px -20px 0; }
+.one_allergy .close_button {
+    position: absolute; top: 0; right: 0; width: 22px; height: 19px;
+    border: 1px solid rgb(160,160,160); border-width: 0 0 1px 1px; border-radius: 0 4px 0 0;
+    background-color: rgba(0,0,0,0.2);
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+.one_allergy:hover .close_button { border-color: rgb(120,120,120); }
+.one_allergy .close_button:hover { border-width: 0 0 1px 1px; border-color: rgb(120,120,120); background-color: rgb(246,66,40); }
 
 .one_allergy_editing .bottom_buttons { text-align: left; }
 .one_allergy_editing .bottom_buttons .bold { float: right; }
@@ -92,7 +106,7 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 /* floating window */
 .floating_window {
     margin: 0 auto; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-    border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
+    border: 1px solid rgb(160,160,160); border-radius: 6px; background: url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 .floating_window_gradient {
@@ -100,7 +114,16 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
-.close_button { position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; z-index: 2; }
+.close_button {
+    position: absolute; top: 5px; right: 5px; width: 16px; height: 16px; z-index: 2;
+    text-decoration: none; border: none; border-radius: 3px;
+    background: url("close.png") center center no-repeat transparent;
+}
+.close_button:hover {
+    text-decoration: none; border: 1px solid rgba(0,0,0,0.4);
+    background-image: url("close_hover.png"); background-color: rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
 .action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
 .action_area img { margin-right: 0.25em; vertical-align: -8%; }
 

@@ -36,7 +36,7 @@ if (reports && reports.length > 0) {
     var reports_reverse = reports_sorted.reverse();
     for (var i = 1; i <= reports_reverse.length; i++) {
         var report = reports_reverse[i-1]; %>
-        <td><%= view('./views/allergy/list', report) %></td>
+        <td><%= view('./views/allergy/item', report) %></td>
         <% if (0 == i % 3) { %>
         </tr><tr>
         <% } %>

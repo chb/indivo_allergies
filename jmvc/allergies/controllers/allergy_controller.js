@@ -189,7 +189,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				var parent = this.allergyParentFor(div);
 				var latest = parent.model().meta.latest;
 				var data = { meta: { status: 'replaced', latest: latest }, item: allergy };
-				var hist = $($(this.view('list', data)).html()).attr('id', node_id);
+				var hist = $($(this.view('item', data)).html()).attr('id', node_id);
 				div.after(hist);
 				
 				// add a restore button
@@ -411,13 +411,6 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		
 		div.css('margin-top', Math.round(Math.max(Math.min(desired_offset, max), min)));
 	},
-	
-	'.close_button mouseover': function(elem) {
-		$(elem).attr('src', "jmvc/allergies/resources/close_hover.png");
-	},
-	'.close_button mouseout': function(elem) {
-		$(elem).attr('src', "jmvc/allergies/resources/close.png");
-	},
 	'.dismiss_floating click': function(sender) {
 		this.dismissFloatingDiv(sender);
 	},
@@ -494,7 +487,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	        alert("update()\n\nThe supplied allergy object is incomplete (no meta)");
 	        return;
 	    }
-		var view = $(this.view('list', allergy));
+		var view = $(this.view('item', allergy));
 		parent.replaceWith(view);
 	}
 });

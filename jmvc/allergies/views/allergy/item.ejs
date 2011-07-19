@@ -5,12 +5,11 @@
         <% if ("active" != meta.status) { %>
         <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
         <% } %>
+        <% if (item.type) { %><h3><%= item.type %></h3><% } %>
         <h2><%= item.name %></h2>
         <% if (item.name_value) { %>
             <div class="coded_allergy_type">SNOMED-CT: <a href="<%= item.name_type %><%= item.name_value %>" target="_blank"><%= item.name_value %></a></div>
         <% } %>
-        <!--h3><%= item.type %></h3-->
-        <img class="type_image" src="resources/allergy_types/<%= item.type ? item.type : 'Other' %>.png" alt="" title="<%= item.type %>" />
         
         <!-- MAIN -->
         <% if (item.reaction) { %>
