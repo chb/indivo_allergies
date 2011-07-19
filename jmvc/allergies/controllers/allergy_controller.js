@@ -304,14 +304,13 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			allergy.setStatus(new_status, input.val(), this.callback('didSetStatus', sender, new_status));
 		}
 	},
-	didSetStatus: function(sender, new_status, data, textStatus) {
-		if ('success' == textStatus && 'success' == data.status) {
+	didSetStatus: function(sender, new_status, allergy, textStatus) {
+		if ('success' == textStatus && 'success' == allergy.status) {
 			var parent = this.allergyParentFor(sender);
-			var allergy = new Allergies.Models.Allergy(data.data);
 			this.update(parent, allergy);
 		}
 		else {
-			alert("Failed to " + new_status + " allergy:\n\n" + data.data);
+			alert("Failed to " + new_status + " allergy:\n\n" + allergy);
 			this.actionIsDone(sender);
 		}
 	},

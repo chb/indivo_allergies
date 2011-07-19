@@ -116,7 +116,9 @@ $.Model.extend('Allergies.Models.Allergy',
 			dataType: 'json',
 			success: function(data, textStatus, xhr) {
 				if (success) {
-					success(data, textStatus);
+				    var allergy = new Allergies.Models.Allergy(data.data);
+				    allergy.status = data.status;
+					success(allergy, textStatus);
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {

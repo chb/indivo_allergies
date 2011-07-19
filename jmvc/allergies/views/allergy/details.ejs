@@ -42,9 +42,9 @@
 	<% var archive_title = ("archived" == meta.status) ? "Reactivate..." : "Archive...";
 	var void_title = ("void" == meta.status) ? "Unvoid..." : "Void..."; %>
     
-	<a class="button action_button red<% if ("archived" == meta.status) { %> disabled<% } %>" data="void" <%= this %>><%= void_title %></a>
-	<a class="button action_button<% if ("void" == meta.status) { %> disabled<% } %>" data="archive" <%= this %>><%= archive_title %></a>
-    <a class="button action_button bold<% if ("active" != meta.status) { %> disabled<% } %>" data="edit" <%= this %>>Edit</a>
+	<a class="button red <%= ("archived" == meta.status) ? "disabled" : "action_button" %>" data="void" <%= this %>><%= void_title %></a>
+	<a class="button <%= ("void" == meta.status) ? "disabled" : "action_button" %>" data="archive" <%= this %>><%= archive_title %></a>
+    <a class="button bold <%= ("active" != meta.status) ? "disabled" : "action_button" %>" data="edit" <%= this %>>Edit</a>
 </div>
 
 <!-- HISTORY -->
