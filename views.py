@@ -142,8 +142,9 @@ def replace_allergy(request, allergy_id):
     """
     Creates an allergy XML from POSTed values and submits it as replacement of an existing document
     """
+    status = 'error'
     if 'POST' != request.method:
-        return HttpResponse('error')
+        return HttpResponse({'status': status, 'data': ErrorStr('method not allowed').str()})
     
     # parse the data
     record_id = request.session['record_id']
@@ -155,11 +156,9 @@ def replace_allergy(request, allergy_id):
     res = client.replace_document(record_id = record_id, document_id = allergy_id, data = new_xml)
     
     # parse the XML and return as JSON
-    status = 'success'
     meta_xml = res.response.get('response_data', None) if res.response else None
     allergy = None
     if 200 != res.response.get('response_status'):
-        status = 'error'
         allergy = ErrorStr(meta_xml).str()
     else:
         meta = _parse_meta(parse_xml(meta_xml))
@@ -167,6 +166,7 @@ def replace_allergy(request, allergy_id):
             doc_xml = client.read_document(record_id = record_id, document_id = meta['id']).response['response_data']
             allergy = _parse_report(parse_xml(doc_xml))             # don't just use _parse_allergy() here because we want the complete allergy json tree
             if allergy:
+                status = 'success'
                 allergy['meta'] = meta
     
     # we always return a 200 HttpResponse, let's deal with errors in the controller
@@ -251,13 +251,13 @@ def set_allergy_status(request, allergy_id):
         res = client.set_document_status(record_id = record_id, document_id = allergy_id,  data = data)
         
         # we always return a 200 HttpResponse, let's deal with errors in the controller
-        status = res.response['response_status']
+        status = res.response.get('response_status')
         if 200 == int(status):
             
-            # success, give us back the document
-            meta_xml = client.read_document_meta(record_id = record_id, document_id = allergy_id).response['response_data']
+            # success, give back the document
+            meta_xml = client.read_document_meta(record_id = record_id, document_id = allergy_id).response.get('response_data')
             meta = parse_xml(meta_xml)
-            doc_xml = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
+            doc_xml = client.read_document(record_id = record_id, document_id = allergy_id).response.get('response_data')
             doc = parse_xml(doc_xml)
             report = {
                 'meta': _parse_meta(meta),
@@ -265,9 +265,60 @@ def set_allergy_status(request, allergy_id):
             }
             ret = { 'status': 'success', 'data': report }
         else:
-            ret = { 'status': 'error', 'data': ErrorStr(res.response['response_data'] if res.response['response_data'] else status).str() }
+            ret = { 'status': 'error', 'data': ErrorStr(res.response.get('response_data') if res.response else status).str() }
     
     return HttpResponse(simplejson.dumps(ret))
+
+
+def add_note(request, allergy_id):
+    status = 'error'
+    data = None
+    if 'POST' != request.method:
+        data = ErrorStr('method not allowed').str()
+    else:
+        client = get_indivo_client(request)
+        record_id = request.session['record_id']
+        post = request.POST
+        
+        # create the XML from POST values
+        from datetime import datetime
+        
+        # TODO: Ensure dates are in the right format
+        date_visit = post['date_onset'] if post.get('date_onset', '') != '' else datetime.now().strftime('%Y-%m-%d')
+        date_final = post['date_finalized'] if post.get('date_finalized', '') != '' else ''
+        
+        params = {'chiefComplaint': post.get('chief_complaint', ''),
+                     'dateOfVisit': date_visit,
+                     'finalizedAt': date_final,
+                         'content': post.get('content', ''),
+                   'provider_name': post.get('provider_name', ''),
+                   'visitLocation': post.get('visit_location'),
+                       'visitType': post.get('visit_type', ''),
+                 'visitType_value': post.get('visit_type_value', ''),
+                      'specialty' : post.get('specialty', ''),
+                 'specialty_value': post.get('specialty_value', '')}
+        
+        # create document, post and relate
+        new_xml = render_raw('clinical_note', params, type='xml')
+        res = client.post_document_relate_given(record_id = record_id, document_id = allergy_id, rel_type = post.get('rel_type', 'followup'), data = new_xml)
+        if not res.response or 200 != res.response.get('response_status'):
+            data = ErrorStr(res.response.get('response_data') if res.response else 'Error relating new document').str()
+        else:
+            print res.response
+            
+            # success, give us back the document
+         #   meta_xml = client.read_document_meta(record_id = record_id, document_id = allergy_id).response['response_data']
+         #   meta = parse_xml(meta_xml)
+         #   doc_xml = client.read_document(record_id = record_id, document_id = allergy_id).response['response_data']
+         #   doc = parse_xml(doc_xml)
+         #   report = {
+         #       'meta': _parse_meta(meta),
+         #       'item': _parse_allergy(doc)
+         #   }
+            status = 'success'
+            data = ''
+    
+    return HttpResponse(simplejson.dumps({'status': status, 'data': data}))
 
 
 def allergies(request):
@@ -474,10 +525,10 @@ def _allergy_params_from_post(post):
     # get the variables
     params = {  'coding_system':        'snomed',
                 'date_diagnosed':       date_diag,
-                'allergen_type':        post.get('allergen_type', 'unknown'),
-                'allergen_name':        post.get('allergen_name', ''),
+                'allergen_type':        post.get('allergen_type', ''),
+                'allergen_name':        post.get('allergen_name', 'Unspecified'),
                 'allergen_name_value':  post.get('allergen_name_value'),
-                'reaction':             post.get('reaction', 'unknown'),
+                'reaction':             post.get('reaction', ''),
                 'specifics':            post.get('specifics', ''),
                 'diagnosed_by' :        post.get('diagnosed_by', '')
             }

@@ -34,6 +34,12 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
 
+.warnsign {
+    height: 1.9em; line-height: 2em; margin:-21px -26px 0; padding: 0 25px;
+    border: 1px solid rgb(120,120,120); border-radius: 6px 6px 0 0;
+    color: white; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
+}
 .one_allergy h2 { display: block; margin: 0; font-size: 1.6em; }
 .coded_allergy_type { font-size: 0.8em; }
 .one_allergy h3 {
@@ -58,23 +64,37 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .one_allergy:hover .close_button { border-color: rgb(120,120,120); }
 .one_allergy .close_button:hover { border-width: 0 0 1px 1px; border-color: rgb(120,120,120); background-color: rgb(246,66,40); }
 
-.one_allergy_editing .bottom_buttons { text-align: left; }
-.one_allergy_editing .bottom_buttons .bold { float: right; }
-
-.bottom_buttons p.meta { float: left; max-width: 75%; margin: 0; text-align: left; color: rgba(70,67,55,0.7); }
-.warnsign {
-    height: 1.9em; line-height: 2em; margin:-21px -26px 0; padding: 0 25px;
-    border: 1px solid rgb(120,120,120); border-radius: 6px 6px 0 0;
-    color: white; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,0.8);
-    background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
+/* relations */
+.relations { margin: 1.25em 0 0; font-size: 1.1em; font-weight: bold; }
+#rel_notes { float: right; }
+.relation .button { border-radius: 3px 0 0 3px; border-right-width: 0px; }
+.relation .add {
+    color: black; text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    border-radius: 0 3px 3px 0; border-right-width: 1px;
+    background-color: rgb(64,128,0);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(85,200,0)), to(rgb(66,155,0)));
+    background-image:-moz-linear-gradient(top, rgb(85,200,0), rgb(66,155,0));
+}
+.relation .add:hover {
+    background-color: rgb(64,128,0);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(72,170,0)), to(rgb(64,128,0)));
+    background-image:-moz-linear-gradient(top, rgb(72,170,0), rgb(64,128,0));
 }
 
+/* allergy action buttons */
+.one_allergy_editing .bottom_buttons {
+    /*margin: 1em -10px 0.5em; padding: 0.75em 10px; background: rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.3); border-radius: 5px;*/
+    margin-top: 1.25em; padding-top: 0; text-align: left;
+    /*-webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.95); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.95); box-shadow: 0 1px 0 rgba(255,255,255,0.95);*/
+}
+.one_allergy_editing .bottom_buttons .bold { float: right; } 
+
 /* allergy history */
-.history { margin-top: 1em; font-size: 0.9em; }
+.history { margin-top: 1.25em; font-size: 0.9em; }
 .one_history { padding: 0.5em 0 0.75em; border: 1px dotted transparent; border-top-color: rgb(160,160,160); }
 .history_meta { cursor: pointer; }
 .active_history {
-    margin: 0 -10px; padding: 0.5em 10px 0; background: rgba(0,0,0,0.1); border-radius: 6px 6px 0 0;
+    margin: 0 -10px; padding: 0.5em 10px 0; background: rgba(0,0,0,0.1); border-radius: 5px 5px 0 0;
     border-top: 1px solid rgba(0,0,0,0.3); border-left: 1px solid rgba(0,0,0,0.2); border-right: 1px solid rgba(0,0,0,0.2);
 }
 .one_history img { float: left; margin: 0.2em 8px 0.2em 0; }
@@ -92,20 +112,22 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .history h3 { font-size: 1.4em; }
 
 
-/* allergy form */
-#form_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 20; }
-#allergy_form { position: relative; width: 520px; text-align: left; }
-#allergy_form textarea { height: 8.5em; padding: 2px; }
-#allergy_form .full { float: right; width: 75%; }
-#allergy_form .short { width: 30%; }
-#allergy_form .code_info { float: right; display: none; width: 75%; margin-top; 0.3em; font-size: 0.7em; color: inherit; text-align: right; }
-#allergy_form p { clear: right; margin: 0; padding-top: 1em; }
-#allergy_form .ui-autocomplete { max-width: 68%; max-height: 310px; overflow-y: auto; overflow-x: hidden; }
+/* forms */
+.float_form h2 { margin: 0; font-size: 1.6em; }
+.float_form textarea { height: 8.5em; padding: 2px; }
+.float_form .full { float: right; width: 75%; }
+.float_form .short { float: right; width: 30%; margin-right: 45%; }
+.float_form .code_info { float: right; display: none; width: 75%; margin-top; 0.3em; font-size: 0.7em; color: inherit; text-align: right; }
+.float_form p { clear: right; margin: 0; padding-top: 1em; }
+.float_form .multi_row { float: right; width: 76%; text-align: right; }
+.multi_row .short { float: none; margin-right: 0; }
+.float_form .ui-autocomplete { max-width: 68%; max-height: 310px; overflow-y: auto; overflow-x: hidden; }
 
 
 /* floating window */
+#float_container { position: absolute; top: -16px; left: -8px; right: -8px; bottom: -16px; background-color: rgba(255,255,255,0.5); z-index: 20; }
 .floating_window {
-    margin: 0 auto; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    position: relative; width: 520px; margin: 0 auto; text-align: left; text-shadow: 0 1px 0 rgba(255,255,255,0.8);
     border: 1px solid rgb(160,160,160); border-radius: 6px; background: url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 6px 20px rgba(0,0,0,0.5); -moz-box-shadow: 0 6px 20px rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
@@ -124,8 +146,6 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image: url("close_hover.png"); background-color: rgba(0,0,0,0.3);
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
-.action_area { display: none; position: absolute; bottom: 9px; left: 10px; width: 60%; color: white; text-shadow: 0 -1px 0 black; }
-.action_area img { margin-right: 0.25em; vertical-align: -8%; }
 
 /* confirmation dialog */
 .confirm {
@@ -160,10 +180,30 @@ div.error { padding: 0.5em 0; color: #800; }
 input.error { border-color: rgb(220,0,0); background-color: rgb(255,219,207); }
 .red { color: #800; }
 .green { color: #480; }
+.faded { color: #888; color: rgba(0,0,0,0.5); }
 .attention { margin: 3em 2em; font-size: 1.4em; font-weight: bold; text-align: center; }
 a.disabled:hover { border: none; cursor: default; }
 .action_spinner { margin:0 1em; vertical-align:-11%; }
 .clear { clear: both; }
+
+/* Button */
+a.button, a.button:link, a.button:visited {
+    display: inline-block; padding: 0 0.5em; text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid rgb(180,180,180); border-color: rgba(0,0,0,0.3); border-radius: 4px;
+    background-color: rgb(245,245,245);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(255,255,255)), to(rgb(230,230,230)));
+    background-image:-moz-linear-gradient(top, rgb(255,255,255), rgb(230,230,230));
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+a.button:hover {
+    border-color: rgb(120,120,120); border-color: rgba(0,0,0,0.5); background-color: rgb(235,235,235);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(250,250,250)), to(rgb(215,215,215)));
+    background-image:-moz-linear-gradient(top, rgb(250,250,250), rgb(215,215,215));
+}
+a.button.disabled, a.button.disabled:hover {
+    color: rgb(120,120,120); text-shadow: 0 1px 0 rgba(255,255,255,0.6); border-color: rgb(180,180,180); border-color: rgba(0,0,0,0.3);
+}
+a.button.bold { border-color: rgb(150,150,150); border-color: rgba(0,0,0,0.4); }
 
 /* status */
 .status_inactive {  }
@@ -184,7 +224,7 @@ a.disabled:hover { border: none; cursor: default; }
     color: black; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: none; border-radius: 0;
     background: rgb(215,215,215);
-    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(235,235,235)));
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(210,210,210)));
     background-image:-moz-linear-gradient(top, rgb(230,230,230), rgb(210,210,210));
 }
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: none; font-weight: bold; color: black; }
@@ -194,12 +234,12 @@ a.disabled:hover { border: none; cursor: default; }
 #ui-datepicker-div { display: none; }
 .ui-datepicker-header .ui-state-hover { background: transparent; }
 .ui-datepicker-calendar .ui-state-highlight {
-    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(246,168,40)), to(rgb(246,168,40)));
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(252,186,42)), to(rgb(246,168,40)));
     background-image:-moz-linear-gradient(top, rgb(252,186,42), rgb(246,168,40));
 }
 .ui-datepicker-calendar .ui-state-active {
     text-shadow: 0 1px 0 rgba(255,255,255,0.8); color: rgb(220,137,0);
-    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(235,235,235)));
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(230,230,230)), to(rgb(210,210,210)));
     background-image:-moz-linear-gradient(top, rgb(230,230,230), rgb(210,210,210));
 }
 

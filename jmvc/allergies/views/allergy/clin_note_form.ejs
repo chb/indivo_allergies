@@ -1,0 +1,31 @@
+
+<form id="clin_note_form" class="floating_window float_form" method="post" action="" onsubmit="return false" <%= this %>>
+    <div class="floating_window_gradient">
+        <a class="close_button dismiss_floating" href="javascript:void(0);"></a>
+        
+        <% if (!this.item) { %>
+        <h2 class="error">You can only add episodes to allergies</h2>
+        <% } else { %>
+        
+        <h2><span class="faded">Episode of</span> <%= item.name %></h2>
+        
+        <p class="bigger">Complaint<input class="full" type="text" name="chief_complaint" value="" /></p>
+        <p>Description<textarea class="full" name="content"></textarea></p>
+        
+        <p>Visit date<input class="short date" type="text" name="date_visit" value="" /></p>
+        <p>Finalized<input class="short date" type="text" name="date_finalized" value="" /></p>
+        
+        <p>Visit type<input class="full" type="text" name="visit_type" value="" /></p>
+        <p>Doctor<input class="full" type="text" name="provider_name" value="" /></p>
+        <p>Location<input class="full" type="text" name="visit_location" value="" /></p>
+        <p>Specialty<input class="full" type="text" name="specialty" value="" /></p>
+        
+        <div class="bottom_buttons">
+            <input class="dismiss_floating" type="reset" value="Cancel" <%= this %> />
+            <input type="submit" value="<% if (this) { %>Save<% } else { %>Report<% } %>" />
+            <input type="hidden" name="id" value="" />
+            <input type="hidden" name="allergy_id" value="<%= meta.id %>" />
+        </div>
+        <% } %>
+    </div>
+</form>

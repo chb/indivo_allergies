@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     (r'^allergies/(?P<allergy_id>[^/]+)/replace$', replace_allergy),
     (r'^allergies/(?P<allergy_id>[^/]+)/history/$', allergy_history),
     (r'^allergies/(?P<allergy_id>[^/]+)/set-status$', set_allergy_status),
+    (r'^allergies/(?P<allergy_id>[^/]+)/add_note$', add_note),
     
     (r'^codelookup$', code_lookup),
     
