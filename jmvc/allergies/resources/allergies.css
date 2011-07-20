@@ -4,12 +4,21 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); }
 
 #allergy { position: relative; }
-#loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
-#loading.floating { float: right; width: 74%; margin: 0; text-align: left; }
-#loading .loader { vertical-align: text-bottom; height: 20px; margin-right: 0.5em; }
+#loading { text-align: center; }
+#loading h3 {
+    display: inline-block; margin: 4em 0; padding: 2em 3em;
+    text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6);
+    border: 1px solid rgb(180,180,180); border-radius: 8px;
+    background-color: rgb(230,230,230); background-color: rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+#loading .loader { vertical-align: -8%; height: 20px; margin-right: 0.5em; }
 
-#top_buttons { float: right; position: relative; margin: 0.75em 1em; }
-#filter_buttons { float: right; width: 70%; line-height: 3.6em; }
+#top { position: relative; height: 45px; margin: 1em 0 2em; }
+#add_allergy { float: right; margin: 0.75em 1em; }
+#top h2 { float: left; margin: 0 1em 0 0; }
+#filter_buttons { float: left; margin: 0 1em; line-height: 3em; }
+#filter_buttons .segmented { margin: 0 2em; line-height: 1.6; }
 #filter_buttons input[type="checkbox"] { margin-right: 0.75em; }
 #filter_buttons img { margin-right: 0.55em; vertical-align: -5%; }
 #filter_buttons label { margin-right: 1.5em; }
@@ -22,6 +31,7 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
+.one_allergy.dense { min-width: 180px; }
 .one_allergy:hover {
     border-color: rgb(120,120,120);
 }
@@ -42,6 +52,7 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
     background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
 }
 .one_allergy h2 { display: block; margin: 0; font-size: 1.6em; }
+.one_allergy.dense h2 { font-size: 1.3em; }
 .coded_allergy_type { font-size: 0.8em; }
 .one_allergy h3 {
     position: absolute; right: 0; top: 0; margin: 0; padding: 0 1em;
@@ -52,18 +63,28 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
     background-image:-moz-linear-gradient(top, rgb(246,168,40), rgb(255,195,40));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
-.one_allergy_editing h3 { right: 23px; height: 20px; border-radius: 0 0 0 4px; }
+.one_allergy_editing h3 { right: 90px; border-radius: 0 0 0 4px; border-color: rgb(120,120,120); }
 .one_allergy:hover h3 { border-color: rgb(120,120,120); }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
+.one_allergy.dense p { margin-top: 0; }
 .one_allergy_inner .warnsign { margin: -20px -20px 0; }
-.one_allergy .close_button {
-    position: absolute; top: 0; right: 0; width: 22px; height: 20px;
+.one_allergy .hide_details {
+    position: absolute; top: 0; right: 0; width: 65px; margin: 0; padding: 0 12px;
+    color: rgb(70,67,55); font-size: 0.8em; font-weight: normal; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     border: 1px solid rgb(160,160,160); border-width: 0 0 1px 1px; border-radius: 0 4px 0 0;
     background-color: rgba(0,0,0,0.2);
+    background:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.25)), to(rgba(0,0,0,0.15)));
+    background:-moz-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
-.one_allergy:hover .close_button { border-color: rgb(120,120,120); }
-.one_allergy .close_button:hover { border-width: 0 0 1px 1px; border-color: rgb(120,120,120); background-color: rgb(246,66,40); }
+.one_allergy_editing .hide_details { border-color: rgb(120,120,120); }
+.one_allergy:hover .hide_details { border-color: rgb(120,120,120); }
+.one_allergy .hide_details:hover {
+    border-width: 0 0 1px 1px; border-color: rgb(120,120,120);
+    background-color: rgba(0,0,0,0.3);
+    background:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.35)), to(rgba(0,0,0,0.25)));
+    background:-moz-linear-gradient(top, rgba(0,0,0,0.35), rgba(0,0,0,0.25));
+}
 
 /* relations */
 .relations { margin: 1.5em 0 0; font-size: 1.1em; font-weight: bold; }
@@ -228,6 +249,12 @@ a.button:hover {
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(250,250,250)), to(rgb(215,215,215)));
     background-image:-moz-linear-gradient(top, rgb(250,250,250), rgb(215,215,215));
 }
+a.button.active, a.button.active:hover {
+    color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.8); border-color: rgb(80,80,80);
+    background-color: rgb(235,235,235);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(120,120,120)), to(rgb(180,180,180)));
+    background-image:-moz-linear-gradient(top, rgb(120,120,120), rgb(180,180,180));
+}
 a.button.disabled, a.button.disabled:hover {
     cursor: default;
     color: rgb(120,120,120); text-shadow: 0 1px 0 rgba(255,255,255,0.6);
@@ -236,6 +263,11 @@ a.button.disabled, a.button.disabled:hover {
     background-image:-moz-linear-gradient(top, rgb(255,255,255), rgb(230,230,230));
 }
 a.button.bold { border-color: rgb(150,150,150); border-color: rgba(0,0,0,0.4); }
+
+.segmented { display: inline-block; }
+.segmented a.button { border-left-width: 0; border-radius: 0; }
+.segmented a.button:first-child { border-left-width: 1px; border-radius: 4px 0 0 4px; }
+.segmented a.button:last-child { border-radius: 0 4px 4px 0; }
 
 /* status */
 .status_inactive {  }

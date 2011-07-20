@@ -12,33 +12,42 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 /* @Prototype */
 {
 	showingStatus: [ 'active' ],
+	displayType: 'dense',
+	lastLoadedAllergies: [],
 	
 	ready: function() {
 		if (!$("#allergy").is('*')) {
 			$(document.body).append($('<div/>').attr('id','allergy'));
 		}
-		$('#allergy').html(this.view('loading'));
+		$('#allergy').html(this.view('init'));
 	},
 	load: function() {
 		this.getList(this.showingStatus);
 	},
 	
-	getList: function(get_status) {
-		Allergies.Models.Allergy.findAll({ 'status': (get_status ? get_status.join('+') : 'active') }, this.callback('list'));
+	getList: function(get_status, display_type) {
+		Allergies.Models.Allergy.findAll({ 'status': (get_status ? get_status.join('+') : 'active') }, this.callback('list', display_type));
 	},
-	list: function(allergies) {
+	list: function(display_type, allergies) {
 		if ('success' == allergies.status) {
 			
 			// we can use a callback here if we need strict ordering (e.g. for iframe resize)
 			var self = this;
 			var callback = function() {
 				$('#loading').hide();
-			};
+			}
 			var _show = function(callback) {
-				$('#allergy').html(self.view('init',
+				if (display_type) {
+					self.displayType = display_type;
+				}
+				else {
+					display_type = self.displayType;
+				}
+				self.lastLoadedAllergies = allergies;
+				$('#allergy_list').replaceWith(self.view(display_type,
 					{
-						'reports':	allergies,
-						'summary':	allergies.summary
+						'reports': allergies,
+					//	'summary': allergies.summary
 					}));
 				if (allergies.summary) {
 					self.updateFilterButtons(allergies.summary.showing_status);
@@ -59,8 +68,21 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	
 	/**
-	 * document filter
+	 * document filter and view options
 	 */
+	'#display_switch a click': function(a) {
+		a.parent().children().removeClass('active');
+		a.addClass('active');
+		
+		if (!this.lastLoadedAllergies || this.lastLoadedAllergies.length < 1) {
+			$('#loading').show();
+			this.getList(this.showingStatus, a.attr('data'));
+		}
+		else {
+			$('#allergy_list').replaceWith(this.view(a.attr('data'), { reports: this.lastLoadedAllergies }));
+		}
+	},
+	
 	'#filter_buttons input click': function(button) {
 		var stat = button.val();
 		var checked = button.get(0).checked;
@@ -130,7 +152,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		// load history
 		allergy.loadHistory(this.callback('didLoadHistory', div));
 	},
-	'.one_allergy .close_button click': function(close, event) {
+	'.one_allergy .hide_details click': function(close, event) {
 		event.stopPropagation();
 		this.hideDetails(close.parent().parent());
 	},

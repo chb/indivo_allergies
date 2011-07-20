@@ -1,0 +1,25 @@
+<div class="one_allergy dense" <%= this %>>
+    <div class="one_allergy_inner">
+        
+        <!-- STATUS and NAME/TYPE -->
+        <% if ("active" != meta.status) { %>
+        <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
+        <% } %>
+        <% if (item.type) { %><h3><%= item.type %></h3><% } %>
+        <h2><%= item.name %></h2>
+        
+        <!-- MAIN -->
+        <% if (item.reaction) { %>
+        <p class="details"><%= item.reaction %></p>
+        <% } %>
+        
+        <!-- META -->
+        <% if (item.dateDiagnosed || item.diagnosedBy) { %>
+        <p class="meta">
+            <b><%= item.diagnosedBy %></b>
+            <% if (item.diagnosedBy && item.dateDiagnosed) { %>, <% } %>
+            <%= item.dateDiagnosed ? item.dateDiagnosed : "" %>
+        </p>
+        <% } %>
+    </div>
+</div>

@@ -1,49 +1,24 @@
 
-<div id="loading" class="floating">
-    <h3><img class="loader" src="./resources/ajax-loader.gif" />Loading</h3>
-</div>
-
-<div id="top_buttons">
-    <input id="add_allergy" type="button" value="Report an allergy" />
-</div>
-
-<div style="width: 75%;">
+<div id="top">
+    <button id="add_allergy" type="button">Report an allergy</button>
+    
+    <h2>Allergies</h2>
+    
     <div id="filter_buttons">
+        <div id="display_switch" class="segmented">
+            <a class="button active" data="dense">Dense</a><!--
+            --><a class="button" data="full">Full</a>
+        </div>
         <input type="checkbox" id="chk_get_active" value="active" /><label for="chk_get_active">Active</label>
         <input type="checkbox" id="chk_get_archived" value="archived" /><label for="chk_get_archived">Archived</label>
         <input type="checkbox" id="chk_get_void" value="void" /><label for="chk_get_void">Voided</label>
     </div>
     
-    <h2>Allergies</h2>
 </div>
 
-<table id="allergy_list" class="light">
-<colgroup>
-    <col width="33%" />
-    <col width="34%" />
-    <col width="33%" />
-</colgroup>
-<tr>
-<%
-if (reports && reports.length > 0) {
-    var reports_sorted = _(reports).sortBy(function(r){
-        if (typeof(r.item.dateDiagnosed) != 'undefined')
-            return r.item.dateDiagnosed;
-        else
-            return '-99999';
-    });
-    
-    var reports_reverse = reports_sorted.reverse();
-    for (var i = 1; i <= reports_reverse.length; i++) {
-        var report = reports_reverse[i-1]; %>
-        <td><%= view('./views/allergy/item', report) %></td>
-        <% if (0 == i % 3) { %>
-        </tr><tr>
-        <% } %>
-    <% }
-}
-else { %>
-    <td colspan="3"><div class="attention">No reported allergies</div></td>
-<% } %>
-</tr>
-</table>
+<div id="loading">
+    <h3><img class="loader" src="./resources/ajax-loader.gif" />Loading</h3>
+</div>
+
+<div id="allergy_list"></div>
+
