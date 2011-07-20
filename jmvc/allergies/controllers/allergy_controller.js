@@ -125,7 +125,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		div.addClass('one_allergy_active');
 		var details = $(this.view('details', allergy));
 		div.find('div.one_allergy_inner').hide();
-		div.append($('<div/>', { className: 'one_allergy_inner one_allergy_editing' }).html(details));
+		div.append($('<div/>').addClass('one_allergy_inner one_allergy_editing').html(details));
 		
 		// load history
 		allergy.loadHistory(this.callback('didLoadHistory', div));
@@ -193,7 +193,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				div.after(hist);
 				
 				// add a restore button
-				var replace = $('<input/>', { type: 'button', className: 'small' }).val('Restore').click(this.callback('restoreFrom', data));
+				var replace = $('<input/>', { type: 'button' }).addClass('small').val('Restore').click(this.callback('restoreFrom', data));
 				hist.find('.status_replaced').first().append(replace);
 			}
 		}
@@ -256,6 +256,10 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		}
 		
 		switch (action) {
+			case 'add_lab':
+				this.showLabFormFor(this.allergyParentFor(button), allergy);
+				break;
+				
 			case 'add_note':
 				this.showClinNoteFormFor(this.allergyParentFor(button), allergy);
 				break;
@@ -362,7 +366,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
     
 	formReturn: function(form, data, status) {		  // status will always be 'success', look in the data object
-		if ('success' == data.status) {
+		if (data && data.status && 'success' == data.status) {
 			this.getList(this.showingStatus);
 			return;
 		}
@@ -379,13 +383,84 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				}
 			}
 			else {
-				form.find('div.bottom_buttons').after($('<div/>', { className: 'error' }).html(data.data));
+				form.find('div.bottom_buttons').after($('<div/>').addClass('error').html(data.data));
 			}
 		}
 		else {
 			alert("There was a " + data.status + " error, please try again");
 		}
 		$('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
+	},
+	
+	
+	/**
+	 * Lab form
+	 */
+	showLabFormFor: function(button, allergy) {
+		if ($('#float_container').is('*')) {
+			return;
+		}
+		
+		// show the form
+		this.floatingDivWillShow();
+		var main = $(this.view('lab_form', allergy));
+		$('#allergy').append($('<div/>', { id: 'float_container' }).append(main));
+		this.alignFloatingDivTo(main, button);
+		
+		// setup fields
+		$('#lab_form_upload').fileupload({
+			url: 'abc',
+			drop: function (e, data) {
+				$.each(data.files, function (index, file) {
+					alert('Dropped file: ' + file.name);
+				});
+			},
+		});
+	},
+	
+	'#lab_form submit': function(form, event) {
+		form.find('input').removeClass('error');
+		form.find('div.error').remove();
+		
+		var allergy = form.model();
+		if (allergy) {
+			form.find('input[type="submit"]').attr('disabled', 'disabled');
+			//var id = form.find('input[name="id"]').val();			// only needed when we offer to edit clinical notes
+			var params = form.serializeArray();
+			
+			allergy.relateLab(params, this.callback('labFormReturn', form));
+		}
+		else {
+			alert("Error: The allergy model was not found, cannot continue");
+		}
+	},
+	
+	labFormReturn: function(form, data, status) {
+		if (data && data.status && 'success' == data.status) {
+			this.dismissFloatingDiv();
+			alert("SUCCESS!\n\nTODO: Reload display");
+			return;
+		}
+		
+		// there was an error; parse it
+		if (data && data.data) {
+			if (data.data.match(/problem processing allergy report/i)) {
+				
+				// find all erroneous fields
+				var reg = /column\s+"([^"]+)"/gi;
+				var cols = reg.exec(data.data);
+				for (var i = 1; i < cols.length; i += 2) {
+					form.find('input[name="' + cols[i] + '"]').addClass('error');
+				}
+			}
+			else {
+				form.find('div.bottom_buttons').after($('<div/>').addClass('error').html(data.data));
+			}
+		}
+		else {
+			alert("There was a " + data.status + " error, please try again");
+		}
+		$('#clin_note_form').find('input[type="submit"]').removeAttr('disabled');
 	},
 	
 	
@@ -442,9 +517,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	
 	clinNoteFormReturn: function(form, data, status) {
-		if ('success' == data.status) {
+		if (data && data.status && 'success' == data.status) {
 			this.dismissFloatingDiv();
-			alert('now reload the allergy div');
+			alert('Success! --> TODO: Now reload the allergy div');
 			return;
 		}
 		
@@ -460,7 +535,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				}
 			}
 			else {
-				form.find('div.bottom_buttons').after($('<div/>', { className: 'error' }).html(data.data));
+				form.find('div.bottom_buttons').after($('<div/>').addClass('error').html(data.data));
 			}
 		}
 		else {
@@ -520,7 +595,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			var box = allergy_parent.find('div.confirm_box');
 			var buttons = allergy_parent.find('.bottom_buttons');
 			var center = (dialog.innerHeight() - box.outerHeight()) / 2;
-			var m_top = Math.max(buttons.position().top - 45, 25);
+			var m_top = Math.max(buttons.position().top - 60, 25);			// TODO: Calculate offset dynamically to align with buttons
 			box.css('margin-top', Math.min(center, m_top) + 'px');
 			
 			// bind confirm action

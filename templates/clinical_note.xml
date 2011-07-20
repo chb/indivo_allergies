@@ -1,5 +1,6 @@
 <SimpleClinicalNote xmlns="http://indivo.org/vocab/xml/documents#">
   <dateOfVisit>{{dateOfVisit|escape}}</dateOfVisit>
+  <finalizedAt>{{finalizedAt|escape}}</finalizedAt>
   <chiefComplaint>{{chiefComplaint|escape}}</chiefComplaint>
   <content>{{content|escape}}</content>
   <visitType type="http://codes.indivo.org/visit-types#" value="{{visitType_value|escape}}">{{visitType|escape}}</visitType>
@@ -9,5 +10,4 @@
     <name>{{provider_name|escape}}</name>
     <institution>{{visitLocation|escape}}</institution>
   </provider>
-  <finalizedAt>{{finalizedAt|escape}}</finalizedAt>
 </SimpleClinicalNote>
