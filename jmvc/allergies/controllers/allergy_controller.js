@@ -145,6 +145,12 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			if (data.data.length > 0) {
 				var parent = div.find('div.history');
 				parent.removeClass('red');
+				
+				// update num related documents
+				div.find('.show_notes').first().text('0 Reports');
+ 				div.find('.show_labs').first().text(data.num_related + ((1 == data.num_related) ? ' Lab' : ' Labs'));
+				
+				// append history
 				for (var i = 0; i < data.data.length; i++) {
 					parent.append(this.view('history', data.data[i]));
 				}

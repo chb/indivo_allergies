@@ -199,7 +199,7 @@ def one_allergy(request, allergy_id):
 
 def allergy_history(request, allergy_id):
     """
-    Fetches allergy document versions and document status history and
+    Fetches allergy document related documents, versions and document status history and
     sorts them by createdAt
     """
     
@@ -207,37 +207,50 @@ def allergy_history(request, allergy_id):
     record_id = request.session['record_id']
     status = 'success'
     data = None
+    num_rels = 0
     
-    # 1: fetch history
-    res = client.read_document_status_history(record_id = record_id, document_id = allergy_id)
+    # 0: fetch related documents (we're only interested in their number)
+    # TODO: Loop ALL possible rel_types
+    res = client.get_document_relate(record_id = record_id, document_id = allergy_id, rel_type = 'followup')
     res_data = res.response.get('response_data')
-    
     if 200 != res.response.get('response_status'):
         status = 'error'
         data = ErrorStr(res_data).str()
     else:
-        history_etree = parse_xml(res_data)
-        history = _parse_status(history_etree.findall('DocumentStatus'))
+        #import pdb; pdb.set_trace()
+        rel_docs = parse_xml(res_data)
+        num_rels = rel_docs.attrib.get('total_document_count', 0)
         
-        # 2: fetch versions
-        res = client.read_document_versions(record_id = record_id, document_id = allergy_id)
+        # 1: fetch history
+        res = client.read_document_status_history(record_id = record_id, document_id = allergy_id)
         res_data = res.response.get('response_data')
         
         if 200 != res.response.get('response_status'):
             status = 'error'
             data = ErrorStr(res_data).str()
         else:
-            version_etree = parse_xml(res_data)
-            versions = []
-            for v in version_etree.findall('Document'):
-                versions.append(_parse_meta(v))
+            history_etree = parse_xml(res_data)
+            history = _parse_status(history_etree.findall('DocumentStatus'))
             
-            # mix and sort
-            history.extend(versions)
-            history.sort(key=lambda x: datetime.datetime.strptime(x['createdAt'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
-            data = history
-    
-    return HttpResponse(simplejson.dumps({'status': status, 'data': data}), mimetype='text/plain')
+            # 2: fetch versions
+            res = client.read_document_versions(record_id = record_id, document_id = allergy_id)
+            res_data = res.response.get('response_data')
+            
+            if 200 != res.response.get('response_status'):
+                status = 'error'
+                data = ErrorStr(res_data).str()
+            else:
+                version_etree = parse_xml(res_data)
+                versions = []
+                for v in version_etree.findall('Document'):
+                    versions.append(_parse_meta(v))
+                
+                # mix and sort
+                history.extend(versions)
+                history.sort(key=lambda x: datetime.datetime.strptime(x['createdAt'], '%Y-%m-%dT%H:%M:%SZ'), reverse=True)
+                data = history
+        
+    return HttpResponse(simplejson.dumps({'status': status, 'num_related': num_rels, 'data': data}), mimetype='text/plain')
 
 
 def set_allergy_status(request, allergy_id):
@@ -322,16 +335,33 @@ def add_note(request, allergy_id):
 
 
 def add_lab(request, allergy_id):
+    """
+    Takes the POSTed files and relates them to the given allergy
+    TODO: We don't check here whether the documents are actually laboratory data!
+    """
     status = 'error'
     data = None
+    
     if 'POST' != request.method:
         data = ErrorStr('method not allowed').str()
     else:
         client = get_indivo_client(request)
         record_id = request.session['record_id']
         files = request.FILES
-        print files
-        # do something...
+        
+        # post files
+        if files and files.get('lab_file', False):
+            arr = files['lab_file']
+            if not isinstance(arr, list):
+                arr = [files['lab_file']]
+            
+            for file in arr:
+                new_xml = file.read()
+                res = client.post_document_relate_given(record_id = record_id, document_id = allergy_id, rel_type = request.FILES.get('rel_type', 'followup'), data = new_xml)
+                if not res.response or 200 != res.response.get('response_status'):
+                    data = ErrorStr(res.response.get('response_data') if res.response else 'Error relating new document').str()
+                else:
+                    data = 'Uploaded and related document'
     
     return HttpResponse(simplejson.dumps({'status': status, 'data': data}))
 
