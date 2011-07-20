@@ -131,8 +131,13 @@ $.Model.extend('Allergies.Models.Allergy',
 	
 	
 	/**
-	 * Add or edit a clinical note
+	 * Add or edit labs or a clinical note
 	 */
+	relateLab: function(params, success, error) {
+	    alert("relateLab()\n\nNot yet implemented");
+	    success(null, 'error');
+	},
+	
 	addNote: function(params, success, error) {
 	    $.ajax({
 			url: '/apps/allergies/allergies/' + this.meta.id + '/add_note',

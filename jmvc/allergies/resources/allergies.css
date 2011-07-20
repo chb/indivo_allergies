@@ -1,6 +1,7 @@
 body { background: #FAFAFA; padding-bottom: 1.5em; } /* don't inherit background, so we don't color the inside with record colors */
 h2 { margin-bottom: 1em; }
 h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
+hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); }
 
 #allergy { position: relative; }
 #loading { display: block; width: 50%; margin: 2em 0; text-align: center; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
@@ -15,9 +16,9 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 
 
 /* allergy overview */
-#allergy_list td { vertical-align: top; border: none; }
+#allergy_list td { vertical-align: top; padding: 0 2em 2em 0; border: none; }
 .one_allergy {
-    position: relative; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
+    position: relative; min-width: 280px; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
@@ -51,12 +52,12 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
     background-image:-moz-linear-gradient(top, rgb(246,168,40), rgb(255,195,40));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
-.one_allergy_editing h3 { right: 23px; border-radius: 0 0 0 4px; }
+.one_allergy_editing h3 { right: 23px; height: 20px; border-radius: 0 0 0 4px; }
 .one_allergy:hover h3 { border-color: rgb(120,120,120); }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
 .one_allergy_inner .warnsign { margin: -20px -20px 0; }
 .one_allergy .close_button {
-    position: absolute; top: 0; right: 0; width: 22px; height: 19px;
+    position: absolute; top: 0; right: 0; width: 22px; height: 20px;
     border: 1px solid rgb(160,160,160); border-width: 0 0 1px 1px; border-radius: 0 4px 0 0;
     background-color: rgba(0,0,0,0.2);
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
@@ -65,18 +66,21 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .one_allergy .close_button:hover { border-width: 0 0 1px 1px; border-color: rgb(120,120,120); background-color: rgb(246,66,40); }
 
 /* relations */
-.relations { margin: 1.25em 0 0; font-size: 1.1em; font-weight: bold; }
+.relations { margin: 1.5em 0 0; font-size: 1.1em; font-weight: bold; }
 #rel_notes { float: right; }
-.relation .button { border-radius: 3px 0 0 3px; border-right-width: 0px; }
-.relation .add {
-    color: black; text-shadow: 0 1px 0 rgba(255,255,255,0.6);
-    border-radius: 0 3px 3px 0; border-right-width: 1px;
-    background-color: rgb(64,128,0);
+.relation .button {
+    border-radius: 0 3px 3px 0; border-left-width: 0;
+}
+.relation .button img { vertical-align: -8%; }
+.relation .show {
+    color: white; text-shadow: 0 0 3px rgba(0,0,0,0.6);
+    border-left-width: 1px; border-radius: 3px 0 0 3px;
+    background-color: rgb(66,155,0);
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(85,200,0)), to(rgb(66,155,0)));
     background-image:-moz-linear-gradient(top, rgb(85,200,0), rgb(66,155,0));
 }
-.relation .add:hover {
-    background-color: rgb(64,128,0);
+.relation .show:hover {
+    color: rgb(250,255,245); background-color: rgb(64,128,0);
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(72,170,0)), to(rgb(64,128,0)));
     background-image:-moz-linear-gradient(top, rgb(72,170,0), rgb(64,128,0));
 }
@@ -90,7 +94,7 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .one_allergy_editing .bottom_buttons .bold { float: right; } 
 
 /* allergy history */
-.history { margin-top: 1.25em; font-size: 0.9em; }
+.history { margin-top: 1.5em; font-size: 0.9em; }
 .one_history { padding: 0.5em 0 0.75em; border: 1px dotted transparent; border-top-color: rgb(160,160,160); }
 .history_meta { cursor: pointer; }
 .active_history {
@@ -122,6 +126,30 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .float_form .multi_row { float: right; width: 76%; text-align: right; }
 .multi_row .short { float: none; margin-right: 0; }
 .float_form .ui-autocomplete { max-width: 68%; max-height: 310px; overflow-y: auto; overflow-x: hidden; }
+
+
+/* file upload form */
+#lab_form_upload input[type="file"] { display: inline-block; vertical-align: bottom; width: 60%; }
+.file_drop_indicator {
+    display: inline-block; margin: 5% 0 0 20%; padding: 3%; width: 10%; height: 10%;
+    text-align: center; color: rgb(140,140,140); line-height: 1.4; text-shadow: none;
+    border: 3px solid rgb(180,180,180); border-radius: 10px;
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+}
+.dragged_over { color: rgb(64,128,0); border-color: rgb(66,155,0); }
+#file_list { margin-top: 1em; }
+.file_box {
+    float: left; margin: 0 0.5em 0.5em 0; padding: 0.1em 0.5em;
+    font-size: 0.8em; color: white; text-shadow: 0 0 3px rgba(0,0,0,0.6);
+    border: 1px solid rgb(0,63,160); border-radius: 4px;
+    background: rgb(0,128,255);
+    background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
+    background-image:-moz-linear-gradient(top, rgb(69,150,255), rgb(26,122,255));
+}
+.file_box span {
+    margin-left: 0.3em; padding-left: 0.3em; cursor: pointer;
+    font-size: 1.6em; font-weight: bold; line-height: 1;
+    border-left: 1px solid rgb(0,63,160); }
 
 
 /* floating window */
@@ -170,7 +198,7 @@ h3 { margin: 2em 1em; color: rgb(100,100,100); color: rgba(0,0,0,0.6); }
 .meta a { margin-left: 1.5em; }
 .meta b { color: rgb(87,84,73); }
 .bottom_buttons { position: relative; padding-top: 2em; text-align: right; clear: right; }
-.bottom_buttons input[type="submit"] { font-weight: bold; }
+.bottom_buttons button[type="submit"] { font-weight: bold; }
 .active { text-shadow: 0 1px 4px rgba(64,128,0,0.85); }
 .bigger { font-size: 1.15em; }
 .small { font-size: 10px; line-height: 1.4 }

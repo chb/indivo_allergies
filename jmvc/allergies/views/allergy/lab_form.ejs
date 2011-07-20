@@ -1,0 +1,44 @@
+
+<div id="lab_form" class="floating_window float_form">
+    <div class="floating_window_gradient">
+        <a class="close_button dismiss_floating" href="javascript:void(0);" alt="x"></a>
+        
+        <% if (!this.item) { %>
+        <h2 class="error">Here you can only add lab results to allergies</h2>
+        <% } else { %>
+        
+        <h2><span class="faded">Upload new lab results for </span> <%= item.name %></h2>
+        
+        <form id="lab_form_upload" method="post" enctype="multipart/form-data" action="" onsubmit="return false" <%= this %>>
+            <div>
+                <input type="file" name="lab_file" />
+                <div class="file_drop_indicator">drop labs</div>
+            </div>
+            
+            <div id="file_list">
+                <div style="clear: left;"> </div>
+            </div>
+            
+            <div class="bottom_buttons">
+                <button class="dismiss_floating" type="reset">Cancel</button>
+                <button type="submit" disabled="disabled">Upload</button>
+            </div>
+        </form>
+        
+        <hr />
+        
+        <h2><span class="faded">or</span> relate existing results</h2>
+        
+        <form id="lab_form_relate" method="post" action="" onsubmit="return false" <%= this %>>
+            <p class="bigger">Search<input class="full" type="text" name="chief_complaint" value="" disabled /></p>
+            
+            <div class="bottom_buttons">
+                <button class="dismiss_floating" type="reset" <%= this %>>Cancel</button>
+                <button type="submit">Relate</button>
+                <input type="hidden" name="id" value="" />
+                <input type="hidden" name="allergy_id" value="<%= meta.id %>" />
+            </div>
+        </form>
+        <% } %>
+    </div>
+</form>

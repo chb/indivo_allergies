@@ -321,6 +321,21 @@ def add_note(request, allergy_id):
     return HttpResponse(simplejson.dumps({'status': status, 'data': data}))
 
 
+def add_lab(request, allergy_id):
+    status = 'error'
+    data = None
+    if 'POST' != request.method:
+        data = ErrorStr('method not allowed').str()
+    else:
+        client = get_indivo_client(request)
+        record_id = request.session['record_id']
+        files = request.FILES
+        print files
+        # do something...
+    
+    return HttpResponse(simplejson.dumps({'status': status, 'data': data}))
+
+
 def allergies(request):
     """
     Returns a list of allergies for the given record

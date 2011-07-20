@@ -358,7 +358,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	'#allergy_form submit': function(form, event) {
 		form.find('input').removeClass('error');
 		form.find('div.error').remove();
-		form.find('input[type="submit"]').attr('disabled', 'disabled');
+		form.find('button[type="submit"]').attr('disabled', 'disabled');
 		var id = form.find('input[name="id"]').val();
 		var params = form.serializeArray();
 		
@@ -389,7 +389,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		else {
 			alert("There was a " + data.status + " error, please try again");
 		}
-		$('#allergy_form').find('input[type="submit"]').removeAttr('disabled');
+		$('#allergy_form').find('button[type="submit"]').removeAttr('disabled');
 	},
 	
 	
@@ -407,24 +407,73 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		$('#allergy').append($('<div/>', { id: 'float_container' }).append(main));
 		this.alignFloatingDivTo(main, button);
 		
-		// setup fields
+		// setup fileupload
 		$('#lab_form_upload').fileupload({
-			url: 'abc',
-			drop: function (e, data) {
-				$.each(data.files, function (index, file) {
-					alert('Dropped file: ' + file.name);
-				});
+			url: 'allergies/' + allergy.meta.id + '/add_lab',
+			singleFileUploads: true,
+			dragover: function(event) {
+				$('.file_drop_indicator').addClass('dragged_over');
 			},
+			drop: function(event) {
+				$('.file_drop_indicator').removeClass('dragged_over');
+			},
+			add: function(event, data) {
+				var clear = $('#file_list').first().children().last();
+				$.each(data.files, function(index, file) {
+					var rm = $('<span/>').text('×').click(function(e) { $(this).parent().fadeOut(function() { $(this).remove(); }); });
+					var div = $('<div/>').addClass('file_box').data('file', data).text(file.name).append(rm);
+					clear.before(div);
+				});
+				$('#lab_form_upload').find('button:submit').removeAttr('disabled');
+			}
 		});
 	},
 	
-	'#lab_form submit': function(form, event) {
+	'#lab_form_upload submit': function(form, event) {
 		form.find('input').removeClass('error');
 		form.find('div.error').remove();
 		
 		var allergy = form.model();
 		if (allergy) {
-			form.find('input[type="submit"]').attr('disabled', 'disabled');
+			form.find('button[type="submit"]').attr('disabled', 'disabled');
+			
+			// collect files
+			var d = null;
+			var files = $('#file_list').children('.file_box').css('border-color', 'green');
+			for (var i = 0; i < files.length; i++) {
+				var data = $(files[i]).data('file');
+				if (!d) {
+					d = data;
+				}
+				else if (data && data.files && data.files.length > 0) {
+					for (var j = 0; j < data.files.length; j++) {
+						d.files.push(data.files[j]);
+					}
+				}
+			}
+			
+			// submit
+			if (d.files.length > 0) {
+				d.submit().always(function(e, textStatus) {
+					alert("Upload finished with " + textStatus);
+				});
+			}
+			else {
+				alert("There are no files to upload");
+			}
+		}
+		else {
+			alert("Error: The allergy model was not found, cannot continue");
+		}
+	},
+	
+	'#lab_form_relate submit': function(form, event) {
+		form.find('input').removeClass('error');
+		form.find('div.error').remove();
+		
+		var allergy = form.model();
+		if (allergy) {
+			form.find('button[type="submit"]').attr('disabled', 'disabled');
 			//var id = form.find('input[name="id"]').val();			// only needed when we offer to edit clinical notes
 			var params = form.serializeArray();
 			
@@ -437,30 +486,17 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	
 	labFormReturn: function(form, data, status) {
 		if (data && data.status && 'success' == data.status) {
+			//form.die('dragenter dragover dragleave dragexit dragend');
 			this.dismissFloatingDiv();
 			alert("SUCCESS!\n\nTODO: Reload display");
 			return;
 		}
 		
-		// there was an error; parse it
+		// there was an error
 		if (data && data.data) {
-			if (data.data.match(/problem processing allergy report/i)) {
-				
-				// find all erroneous fields
-				var reg = /column\s+"([^"]+)"/gi;
-				var cols = reg.exec(data.data);
-				for (var i = 1; i < cols.length; i += 2) {
-					form.find('input[name="' + cols[i] + '"]').addClass('error');
-				}
-			}
-			else {
-				form.find('div.bottom_buttons').after($('<div/>').addClass('error').html(data.data));
-			}
-		}
-		else {
 			alert("There was a " + data.status + " error, please try again");
 		}
-		$('#clin_note_form').find('input[type="submit"]').removeAttr('disabled');
+		$('#lab_form').find('button[type="submit"]').removeAttr('disabled');
 	},
 	
 	
@@ -505,7 +541,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		
 		var allergy = form.model();
 		if (allergy) {
-			form.find('input[type="submit"]').attr('disabled', 'disabled');
+			form.find('button[type="submit"]').attr('disabled', 'disabled');
 			//var id = form.find('input[name="id"]').val();			// only needed when we offer to edit clinical notes
 			var params = form.serializeArray();
 			
@@ -541,7 +577,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		else {
 			alert("There was a " + data.status + " error, please try again");
 		}
-		$('#clin_note_form').find('input[type="submit"]').removeAttr('disabled');
+		$('#clin_note_form').find('button[type="submit"]').removeAttr('disabled');
 	},
 	
 	
@@ -600,7 +636,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			
 			// bind confirm action
 			self = this;
-			dialog.find('input[type="submit"]').click(function() {
+			dialog.find('button[type="submit"]').click(function() {
 				var sender = $(this);
 				var model = allergy_parent.model();
 				var input = sender.parent().parent().find('input.confirm_input');
@@ -622,7 +658,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		button.parent().parent().find('input').removeAttr('disabled');
 		button.show().parent().find('.action_spinner').remove();
 	},
-	'.confirm_box input[type="reset"] click': function(sender, event) {
+	'.confirm_box button[type="reset"] click': function(sender, event) {
 		event.stopPropagation();
 		this.hideConfirmation(sender);
 	},

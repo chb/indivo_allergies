@@ -19,8 +19,8 @@
         </p>
         
         <div class="bottom_buttons">
-            <input class="dismiss_floating" type="reset" value="Cancel" <%= this %> />
-            <input type="submit" value="<% if (this) { %>Save<% } else { %>Report<% } %>" />
+            <button class="dismiss_floating" type="reset" <%= this %>>Cancel</button>
+            <button type="submit"><%= this ? "Save" : "Report" %></button>
             <input type="hidden" name="id" value="<% if (meta.id) { %><%= meta.id %><% } %>" />
         </div>
     </div>
