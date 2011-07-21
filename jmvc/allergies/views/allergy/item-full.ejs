@@ -5,27 +5,30 @@
         <% if ("active" != meta.status) { %>
         <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
         <% } %>
-        <% if (item.type) { %><h3><%= item.type %></h3><% } %>
-        <h2><%= item.name %></h2>
-        <% if (item.name_value) { %>
-            <div class="coded_allergy_type"><span class="faded">SNOMED-CT:</span> <a href="<%= item.name_type %><%= item.name_value %>" target="_blank"><%= item.name_value %></a></div>
-        <% } %>
         
-        <!-- MAIN -->
-        <% if (item.reaction) { %>
-        <p class="details bigger"><%= item.reaction %></p>
-        <% } %>
-        <% if (item.specifics) { %>
-        <p class="details"><%= item.specifics %></p>
-        <% } %>
-        
-        <!-- META -->
-        <% if (item.dateDiagnosed || item.diagnosedBy) { %>
-        <p class="meta">
-            Diagnosed 
-            <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
-            <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
-        </p>
-        <% } %>
+        <div class="one_allergy_body">
+            <% if (item.type) { %><h3><%= item.type %></h3><% } %>
+            <h2><%= item.name %></h2>
+            <% if (item.name_value) { %>
+                <div class="coded_allergy_type"><span class="faded">SNOMED-CT:</span> <a href="<%= item.name_type %><%= item.name_value %>" target="_blank"><%= item.name_value %></a></div>
+            <% } %>
+            
+            <!-- MAIN -->
+            <% if (item.reaction) { %>
+            <p class="details bigger"><%= item.reaction %></p>
+            <% } %>
+            <% if (item.specifics) { %>
+            <p class="details"><%= item.specifics %></p>
+            <% } %>
+            
+            <!-- META -->
+            <% if (item.dateDiagnosed || item.diagnosedBy) { %>
+            <p class="meta">
+                Diagnosed 
+                <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
+                <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
+            </p>
+            <% } %>
+        </div>
     </div>
 </div>

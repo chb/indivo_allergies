@@ -25,13 +25,12 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
 
 
 /* allergy overview */
-#allergy_list td { vertical-align: top; padding: 0 2em 2em 0; border: none; }
+.full td { vertical-align: top; padding: 0 2em 2em 0; border: none; }
 .one_allergy {
     position: relative; min-width: 280px; text-shadow: 0 1px 0 rgba(255,255,255,0.8); cursor: pointer;
     border: 1px solid rgb(160,160,160); border-radius: 6px; background:url("white_carbon.png") top left repeat rgb(245,245,245);
     -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.25); -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.25); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
-.one_allergy.dense { min-width: 180px; }
 .one_allergy:hover {
     border-color: rgb(120,120,120);
 }
@@ -40,43 +39,48 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5); -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5); box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .one_allergy_inner {
-    padding: 18px 18px 10px; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
+    position: relative; border: 1px solid rgba(255,255,255,0.8); border-radius: 5px;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.4)), to(rgba(255,255,255,0)));
     background-image:-moz-linear-gradient(top, rgba(255,255,255,0.4), rgba(255,255,255,0));
 }
+.one_allergy_body { position: relative; padding: 18px 18px 10px; }
 
 .warnsign {
-    height: 1.9em; line-height: 2em; margin:-21px -26px 0; padding: 0 25px;
+    height: 1.9em; line-height: 2em; margin:-2px -2px 0; padding: 0 25px;
     border: 1px solid rgb(120,120,120); border-radius: 6px 6px 0 0;
     color: white; font-weight: bold; text-shadow: 0 -1px 0 rgba(0,0,0,0.8);
     background-color: rgba(0,0,0,0.3); background: url("warn_stripes.png") top left repeat transparent;
 }
+.one_allergy_row.warnsign { color: inherit; line-height: inherit; text-shadow: inherit; border: none; background-image: url("warn_stripes-soft.png"); }
 .one_allergy h2 { display: block; margin: 0; font-size: 1.6em; }
-.one_allergy.dense h2 { font-size: 1.3em; }
+.one_allergy_row h2 { font-size: 1.3em; margin: 0; }
+.one_allergy_row td:first-child span { float: right; }
 .coded_allergy_type { font-size: 0.8em; }
-.one_allergy h3 {
-    position: absolute; right: 0; top: 0; margin: 0; padding: 0 1em;
-    border: 1px solid rgb(160,160,160); border-radius: 0 4px 0 4px; border-width: 0 0 1px 1px;
+.one_allergy_body h3 {
+    position: absolute; right: -1px; top: 0; height: 19px; margin: 0; padding: 0 1em;
+    border: 1px solid rgb(160,160,160); border-radius: 0 0 0 4px; border-width: 0 0 1px 1px;
     color: rgb(70,67,55); font-size: 0.8em; font-weight: normal; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     background: none repeat scroll 0 0 #DCDCDC;
     background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(246,168,40)), to(rgb(255,195,40)));
     background-image:-moz-linear-gradient(top, rgb(246,168,40), rgb(255,195,40));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
-.one_allergy_editing h3 { right: 90px; border-radius: 0 0 0 4px; border-color: rgb(120,120,120); }
+.one_allergy_body:first-child h3 { top: -1px; border-radius: 0 4px 0 4px; }
+.one_allergy_editing .one_allergy_body h3 { right: 89px; border-radius: 0 0 0 4px; border-color: rgb(120,120,120); }
 .one_allergy:hover h3 { border-color: rgb(120,120,120); }
+.one_allergy_row h3 { margin: 0; font-size: 1.1em; }
 .one_allergy p { clear: left; margin: 0.5em 0 0; }
-.one_allergy.dense p { margin-top: 0; }
-.one_allergy_inner .warnsign { margin: -20px -20px 0; }
-.one_allergy .hide_details {
-    position: absolute; top: 0; right: 0; width: 65px; margin: 0; padding: 0 12px;
+td p { margin-top: 0; }
+.one_allergy_body .hide_details {
+    position: absolute; top: 0; right: -1px; width: 65px; height: 19px; margin: 0; padding: 0 12px;
     color: rgb(70,67,55); font-size: 0.8em; font-weight: normal; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    border: 1px solid rgb(160,160,160); border-width: 0 0 1px 1px; border-radius: 0 4px 0 0;
+    border: 1px solid rgb(160,160,160); border-width: 0 0 1px 1px;
     background-color: rgba(0,0,0,0.2);
     background:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.25)), to(rgba(0,0,0,0.15)));
     background:-moz-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.8); box-shadow: 0 1px 0 rgba(255,255,255,0.8);
 }
+.one_allergy_body:first-child .hide_details { top: -1px; border-radius: 0 4px 0 0; }
 .one_allergy_editing .hide_details { border-color: rgb(120,120,120); }
 .one_allergy:hover .hide_details { border-color: rgb(120,120,120); }
 .one_allergy .hide_details:hover {
@@ -123,18 +127,25 @@ hr { margin: 2em 0 1.5em; border: none; border-top: 1px solid rgb(180,180,180); 
     border-top: 1px solid rgba(0,0,0,0.3); border-left: 1px solid rgba(0,0,0,0.2); border-right: 1px solid rgba(0,0,0,0.2);
 }
 .one_history img { float: left; margin: 0.2em 8px 0.2em 0; }
-.one_history .small { margin-left: 24.5px; }
+.one_history .small { margin: 0 0 10px 24.5px; }
 .history_spinner img { margin-right: 0.75em; vertical-align: -10%; }
 
 .history .one_allergy_inner {
-    min-height: none; margin: 0 -10px 1.5em; padding: 10px; cursor: default; background: rgba(0,0,0,0.1);
+    min-height: none; margin: 0 -10px 1.5em; cursor: default; background: rgba(0,0,0,0.1);
     border: 1px solid rgba(0,0,0,0.15); border-top: none; border-radius: 0 0 6px 6px;
     -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.95); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.95); box-shadow: 0 1px 0 rgba(255,255,255,0.95);
 }
-.history .warnsign { margin: 0 -11px 0.5em; padding: 0 10px; font-size: 1.15em; border-radius: 0; }
+.history .warnsign { margin: 0 -1px 0; padding: 0 10px; font-size: 1.15em; border-radius: 0; }
+.history .one_allergy_body { padding: 10px; }
 .status_replaced input[type="button"], .status_replaced img { float: right; margin-top: 0.55em; }
-.history h2 { font-size: 1.8em; }
-.history h3 { font-size: 1.4em; }
+.history h2 { font-size: 1.7em; }
+.history .one_allergy_body h3 {
+    right: -1px; top: 0px; color: white; text-shadow: 0 0 2px rgba(0,0,0,0.6);
+    border-right: 1px solid rgb(160,160,160); background-color: rgba(0,0,0,0.3);
+    background:-webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0.25)), to(rgba(0,0,0,0.15)));
+    background:-moz-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.5); -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.5); box-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
 
 
 /* forms */

@@ -25,10 +25,10 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		this.getList(this.showingStatus);
 	},
 	
-	getList: function(get_status, display_type) {
-		Allergies.Models.Allergy.findAll({ 'status': (get_status ? get_status.join('+') : 'active') }, this.callback('list', display_type));
+	getList: function(get_status) {
+		Allergies.Models.Allergy.findAll({ 'status': (get_status ? get_status.join('+') : 'active') }, this.callback('list'));
 	},
-	list: function(display_type, allergies) {
+	list: function(allergies) {
 		if ('success' == allergies.status) {
 			
 			// we can use a callback here if we need strict ordering (e.g. for iframe resize)
@@ -37,18 +37,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				$('#loading').hide();
 			}
 			var _show = function(callback) {
-				if (display_type) {
-					self.displayType = display_type;
-				}
-				else {
-					display_type = self.displayType;
-				}
 				self.lastLoadedAllergies = allergies;
-				$('#allergy_list').replaceWith(self.view(display_type,
-					{
-						'reports': allergies,
-					//	'summary': allergies.summary
-					}));
+				$('#allergy_list').replaceWith(self.view(self.displayType, { 'reports': allergies }));
 				if (allergies.summary) {
 					self.updateFilterButtons(allergies.summary.showing_status);
 				}
@@ -73,10 +63,11 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	'#display_switch a click': function(a) {
 		a.parent().children().removeClass('active');
 		a.addClass('active');
+		this.displayType = a.attr('data');
 		
 		if (!this.lastLoadedAllergies || this.lastLoadedAllergies.length < 1) {
 			$('#loading').show();
-			this.getList(this.showingStatus, a.attr('data'));
+			this.getList(this.showingStatus);
 		}
 		else {
 			$('#allergy_list').replaceWith(this.view(a.attr('data'), { reports: this.lastLoadedAllergies }));
@@ -154,7 +145,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	},
 	'.one_allergy .hide_details click': function(close, event) {
 		event.stopPropagation();
-		this.hideDetails(close.parent().parent());
+		this.hideDetails(close.parentsUntil('.one_allergy').parent());
 	},
 	hideDetails: function(div) {
 		div.removeClass('one_allergy_active');
@@ -217,7 +208,7 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 				var parent = this.allergyParentFor(div);
 				var latest = parent.model().meta.latest;
 				var data = { meta: { status: 'replaced', latest: latest }, item: allergy };
-				var hist = $($(this.view('item', data)).html()).attr('id', node_id);
+				var hist = $($(this.view('item-full', data)).html()).attr('id', node_id);
 				div.after(hist);
 				
 				// add a restore button
@@ -372,9 +363,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 			minLength: 2,
 			appendTo: '#allergy_form',
 			select: function(event, ui) {
-				var form = $('#allergy_form');
-				form.find('input[name="allergen_name"]').val(ui.item.physician_value);
-				form.find('input[name="allergen_name_value"]').val(ui.item.code);
+				ui.item.value = ui.item.physician_value;
+				$('#allergy_form').find('input[name="allergen_name_value"]').val(ui.item.code);
 			}
 		}).data('autocomplete')._renderItem = function(list, item) {
 			return $('<li/>').data('item.autocomplete', item).append('<a>' + item.physician_value + '</a>').appendTo(list);

@@ -1,11 +1,4 @@
 <table id="allergy_list" class="light">
-<colgroup>
-    <col width="25%" />
-    <col width="25%" />
-    <col width="25%" />
-    <col width="25%" />
-</colgroup>
-<tr>
 <%
 if (reports && reports.length > 0) {
     var reports_sorted = _(reports).sortBy(function(r){
@@ -18,14 +11,10 @@ if (reports && reports.length > 0) {
     var reports_reverse = reports_sorted.reverse();
     for (var i = 1; i <= reports_reverse.length; i++) {
         var report = reports_reverse[i-1]; %>
-        <td><%= view('./views/allergy/item-dense', report) %></td>
-        <% if (0 == i % 4) { %>
-        </tr><tr>
-        <% } %>
+        <%= view('./views/allergy/item-dense', report) %>
     <% }
 }
 else { %>
-    <td colspan="3"><div class="attention">No reported allergies</div></td>
+    <tr><td colspan="3"><div class="attention">No reported allergies</div></td></tr>
 <% } %>
-</tr>
 </table>
