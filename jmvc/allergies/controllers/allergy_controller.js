@@ -122,6 +122,9 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 	'.one_allergy click': function(div) {
 		this.showDetailsFor(div);
 	},
+	'.link_from_dense click': function(a) {
+		this.showFloatingDetailsFor(a);
+	},
 	showDetailsFor: function(div) {
 		if (div.find('div.one_allergy_editing').length > 0) {
 			return;
@@ -136,16 +139,39 @@ $.Controller.extend('Allergies.Controllers.Allergy',
 		
 		// insert detail view
 		div.addClass('one_allergy_active');
-		var details = $(this.view('details', allergy));
+		var container = $(this.view('details', allergy));
+		var details = container.children().first();
+		details.addClass('one_allergy_editing');
 		div.find('div.one_allergy_inner').hide();
-		div.append($('<div/>').addClass('one_allergy_inner one_allergy_editing').html(details));
+		div.append(details);
 		
 		// load history
 		allergy.loadHistory(this.callback('didLoadHistory', div));
 	},
-	'.one_allergy .hide_details click': function(close, event) {
+	showFloatingDetailsFor: function(link) {
+		if ($('#float_container').is('*')) {
+			return;
+		}
+		
+		// show the details view
+		this.floatingDivWillShow();
+		var allergy = link.model();
+		var div = $(this.view('details', allergy));
+		div.addClass('floating_window').children().first().addClass('one_allergy_editing');
+		$('#allergy').append($('<div/>', { id: 'float_container' }).append(div));
+		//this.alignFloatingDivTo(div, link);
+		
+		// load history
+		allergy.loadHistory(this.callback('didLoadHistory', div));
+	},
+	
+	'.full .one_allergy .hide_details click': function(close, event) {
 		event.stopPropagation();
 		this.hideDetails(close.parentsUntil('.one_allergy').parent());
+	},
+	'.floating_window .hide_details click': function(close, event) {
+		event.stopPropagation();
+		this.dismissFloatingDiv();
 	},
 	hideDetails: function(div) {
 		div.removeClass('one_allergy_active');

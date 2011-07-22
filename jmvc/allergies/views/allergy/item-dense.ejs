@@ -3,7 +3,7 @@
         <% if ("active" != meta.status) { %>
         <span><%= meta.status %></span>
         <% } %>
-        <h2><%= item.name %></h2>
+        <h2><a class="link_from_dense" href="javascript:void(0);" <%= this %>><%= item.name %></a></h2>
     </td>
     <td><% if (item.type) { %><h3><%= item.type %></h3><% } %></td>
     <td class="details"><%= item.reaction %></td>

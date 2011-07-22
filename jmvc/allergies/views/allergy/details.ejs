@@ -1,58 +1,62 @@
-
-<!-- STATUS and NAME/TYPE -->
-<% if ("active" != meta.status) { %>
-<div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
-<% } %>
-
-<div class="one_allergy_body">
-    <a class="hide_details" href="javascript:void(0);">Hide details</a>
-    <% if (item.type) { %><h3><%= item.type %></h3><% } %>
-    <h2><%= item.name %></h2>
-    <% if (item.name_value) { %>
-        <div class="coded_allergy_type"><span class="faded">SNOMED-CT:</span> <a href="<%= item.name_type %><%= item.name_value %>" target="_blank"><%= item.name_value %></a></div>
-    <% } %>
-    
-    <!-- MAIN -->
-    <% if (item.reaction) { %>
-    <p class="details bigger"><%= item.reaction %></p>
-    <% } %>
-    <% if (item.specifics) { %>
-    <p class="details"><%= item.specifics %></p>
-    <% } %>
-    
-    <% if (item.diagnosedBy || item.dateDiagnosed) { %>
-    <p class="meta">
-        Diagnosed 
-        <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
-        <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
-    </p>
-    <% } %>
-    
-    <!-- RELATIONS -->
-    <div class="relations">
-        <div id="rel_notes" class="relation">
-            <a class="button action_button show show_notes" data="show_notes" <%= this %>>~ Reports</a><a class="button action_button" data="add_note" <%= this %>><img src="resources/add.png" alt="+" /></a>
-        </div>
-        <div id="rel_labs" class="relation">
-            <a class="button action_button show show_labs" data="show_labs" <%= this %>>~ Labs</a><a class="button action_button" data="add_lab" <%= this %>><img src="resources/add.png" alt="+" /></a>
-        </div>
-    </div>
-    
-    <!-- ACTION -->
-    <div class="bottom_buttons">
-        <% var archive_title = ("archived" == meta.status) ? "Reactivate..." : "Archive...";
-        var void_title = ("void" == meta.status) ? "Unvoid..." : "Void..."; %>
+<div class="one_allergy" <%= this %>>
+    <div class="one_allergy_inner">
+            
+        <!-- STATUS and NAME/TYPE -->
+        <% if ("active" != meta.status) { %>
+        <div class="warnsign status_<%= meta.status %>"><%= meta.status %></div>
+        <% } %>
         
-        <a class="button red <%= ("archived" == meta.status) ? "disabled" : "action_button" %>" data="void" <%= this %>><%= void_title %></a>
-        <a class="button <%= ("void" == meta.status) ? "disabled" : "action_button" %>" data="archive" <%= this %>><%= archive_title %></a>
-        <a class="button bold <%= ("active" != meta.status) ? "disabled" : "action_button" %>" data="edit" <%= this %>>Edit</a>
-    </div>
-    
-    <!-- HISTORY -->
-    <div class="history">
-        <div class="history_spinner">
-            <img src="jmvc/allergies/resources/spinner-small.gif" alt="" />
-            Fetching history...
+        <div class="one_allergy_body">
+            <a class="hide_details" href="javascript:void(0);">Hide details</a>
+            <% if (item.type) { %><h3><%= item.type %></h3><% } %>
+            <h2><%= item.name %></h2>
+            <% if (item.name_value) { %>
+                <div class="coded_allergy_type"><span class="faded">SNOMED-CT:</span> <a href="<%= item.name_type %><%= item.name_value %>" target="_blank"><%= item.name_value %></a></div>
+            <% } %>
+            
+            <!-- MAIN -->
+            <% if (item.reaction) { %>
+            <p class="details bigger"><%= item.reaction %></p>
+            <% } %>
+            <% if (item.specifics) { %>
+            <p class="details"><%= item.specifics %></p>
+            <% } %>
+            
+            <% if (item.diagnosedBy || item.dateDiagnosed) { %>
+            <p class="meta">
+                Diagnosed 
+                <% if (item.diagnosedBy) { %>by <b><%= item.diagnosedBy %></b><% } %>
+                <% if (item.dateDiagnosed) { %>on <b><%= item.dateDiagnosed %></b><% } %>
+            </p>
+            <% } %>
+            
+            <!-- RELATIONS -->
+            <div class="relations">
+                <div id="rel_notes" class="relation">
+                    <a class="button action_button show show_notes" data="show_notes" <%= this %>>~ Reports</a><a class="button action_button" data="add_note" <%= this %>><img src="resources/add.png" alt="+" /></a>
+                </div>
+                <div id="rel_labs" class="relation">
+                    <a class="button action_button show show_labs" data="show_labs" <%= this %>>~ Labs</a><a class="button action_button" data="add_lab" <%= this %>><img src="resources/add.png" alt="+" /></a>
+                </div>
+            </div>
+            
+            <!-- ACTION -->
+            <div class="bottom_buttons">
+                <% var archive_title = ("archived" == meta.status) ? "Reactivate..." : "Archive...";
+                var void_title = ("void" == meta.status) ? "Unvoid..." : "Void..."; %>
+                
+                <a class="button red <%= ("archived" == meta.status) ? "disabled" : "action_button" %>" data="void" <%= this %>><%= void_title %></a>
+                <a class="button <%= ("void" == meta.status) ? "disabled" : "action_button" %>" data="archive" <%= this %>><%= archive_title %></a>
+                <a class="button bold <%= ("active" != meta.status) ? "disabled" : "action_button" %>" data="edit" <%= this %>>Edit</a>
+            </div>
+            
+            <!-- HISTORY -->
+            <div class="history">
+                <div class="history_spinner">
+                    <img src="jmvc/allergies/resources/spinner-small.gif" alt="" />
+                    Fetching history...
+                </div>
+            </div>
         </div>
     </div>
 </div>

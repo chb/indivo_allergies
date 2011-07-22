@@ -1,13 +1,19 @@
 <SimpleClinicalNote xmlns="http://indivo.org/vocab/xml/documents#">
   <dateOfVisit>{{dateOfVisit|escape}}</dateOfVisit>
   <finalizedAt>{{finalizedAt|escape}}</finalizedAt>
-  <chiefComplaint>{{chiefComplaint|escape}}</chiefComplaint>
-  <content>{{content|escape}}</content>
-  <visitType type="http://codes.indivo.org/visit-types#" value="{{visitType_value|escape}}">{{visitType|escape}}</visitType>
+  <visitType type="http://codes.indivo.org/visit-types#" value="{visitType_value|escape}">{{visitType|escape}}</visitType>
   <visitLocation>{{visitLocation|escape}}</visitLocation>
   <specialty type="http://codes.indivo.org/specialties#" value="{{specialty_value|escape}}">{{specialty|escape}}</specialty>
-  <provider>
-    <name>{{provider_name|escape}}</name>
-    <institution>{{visitLocation|escape}}</institution>
-  </provider>
+  
+  <signature>
+    <at>2010-02-03T13:12:00Z</at>
+    
+    <provider>
+      <name>{{provider_name|escape}}</name>
+      <institution>{{visitLocation|escape}}</institution>
+    </provider>
+  </signature>
+  
+  <chiefComplaint>{{chiefComplaint|escape}}</chiefComplaint>
+  <content>{{content|escape}}</content>
 </SimpleClinicalNote>
