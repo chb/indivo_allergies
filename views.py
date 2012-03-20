@@ -76,6 +76,7 @@ def after_auth(request):
     
     if access_token.has_key('xoauth_indivo_record_id'):
         request.session['record_id'] = access_token['xoauth_indivo_record_id']
+        del request.session['carenet_id']
     else:
         if request.session.has_key('record_id'):
             del request.session['record_id']
