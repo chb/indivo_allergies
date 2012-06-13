@@ -29,7 +29,8 @@ $.Controller.extend('Allergies.Controllers.Allergy',
     var _show = function(callback) {
       $('#allergy').html(_this.view('init',
         {'reports':allergies.reports,
-         'summary':allergies.summary
+         'summary':allergies.summary,
+         'exclusions': allergies.exclusions
         }));
       if(callback) { callback() }
     };

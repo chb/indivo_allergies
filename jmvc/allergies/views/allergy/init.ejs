@@ -9,9 +9,21 @@
 </div>
 
 <table class="light">
+<tbody>
+<% _(exclusions).each(function(ex) {
+    var name=ex.name_title || "";
+%>
+  <tr>
+    <td colspan="2" class="details" style="padding-left: 2em; font-size: 1.1em; background-color: #fff; color: #464337"><%= name %></td>
+  </tr>
+<% }); %>
+</tbody>
+</table>
+
+<table class="light">
     <thead>
     <tr>
-      <th style="width: 200px">diagnosed</th>
+      <th style="width: 200px">category</th>
       <th>allergen</th>
     </tr>
     </thead>
